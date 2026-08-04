@@ -1754,8 +1754,8 @@
     }
 
     let fuelBtns;
-    if (canApprove) {
-      const fuelDisabled = r.approvalStatus !== "approved";
+    if (canApprove || (currentUser && currentUser.role === "driver")) {
+      const fuelDisabled = r.isDraft;
       fuelBtns = `
         <div class="fuel-status-btns">
           <button class="btn-got ${r.fuelReceived === "received" ? "active" : ""}" data-act="received" data-id="${r.id}" ${fuelDisabled ? "disabled" : ""}>
@@ -1867,6 +1867,8 @@
 
       const btn = e.target.closest("button[data-act]");
       if (!btn) return;
+      e.preventDefault();
+      e.stopPropagation();
       const act = btn.dataset.act;
       const id = btn.dataset.id;
       if (act === "view") openViewModal(id);
@@ -2800,7 +2802,7 @@
      that deferral was a mistake in planning Parts 1–2 (their init
      functions were defined but never actually called/wired until now).
      ============================================================ */
-  document.addEventListener("DOMContentLoaded", () => {
+  function bootApp() {
     initDarkMode();
     initAuth();
     initNavigation();
@@ -2823,7 +2825,13 @@
     initMandatoryPhotoButtons();
     initNotifications();
     initOfflineAndPerformanceHandlers();
-  });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", bootApp);
+  } else {
+    bootApp();
+  }
 
   /* ============================================================
      SIGNATURE PAD (pure UI — canvas drawing, no API dependency)

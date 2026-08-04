@@ -517,7 +517,7 @@ async function purgeExpiredPhotos() {
         row.id,
         "Photo Retention Purge",
         "System",
-        `Evidence photos (${purgedTypes.join(", ")}) automatically deleted after 90 days per retention policy.`
+        "📷 Photo evidence has been removed according to the 90-day retention policy."
       );
     }
   }

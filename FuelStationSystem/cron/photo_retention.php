@@ -13,7 +13,7 @@ $pdo = get_db();
 
 echo "[" . date('Y-m-d H:i:s') . "] Starting Photo Retention Purge job...\n";
 
-$sql = "SELECT id, record_code, fuel_receipt_image, money_receipt_image, vehicle_photo_image
+$sql = "SELECT id, record_code, driver_id, fuel_receipt_image, money_receipt_image, vehicle_photo_image
         FROM fuel_records
         WHERE created_at < (NOW() - INTERVAL 90 DAY)
           AND (fuel_receipt_image IS NOT NULL OR money_receipt_image IS NOT NULL OR vehicle_photo_image IS NOT NULL)";
