@@ -491,7 +491,7 @@
       document.title = `${pageTitle} | ${title}`;
     }
 
-    const logoUrl = brandingSettings.companyLogo || logoPath || "/logo/NGO_logo_monogram.webp";
+    const logoUrl = brandingSettings.companyLogo || logoPath || "logo/NGO_logo_monogram.webp";
 
     $all(".brand-logo-slot").forEach((slot) => {
       slot.innerHTML = `<img src="${logoUrl}" class="brand-logo-img" alt="ATMABISWAS Logo" style="width:100%;height:100%;object-fit:contain;" />`;
@@ -633,7 +633,7 @@
     byId("settingsTheme").value = getThemePreference();
     applyBranding();
 
-    const logoUrl = brandingSettings.companyLogo || logoPath || "/logo/NGO_logo_monogram.webp";
+    const logoUrl = brandingSettings.companyLogo || logoPath || "logo/NGO_logo_monogram.webp";
     const logoPreview = byId("settingsLogoPreview");
     if (logoPreview) {
       logoPreview.innerHTML = `<img src="${logoUrl}" class="brand-logo-img" alt="ATMABISWAS Logo" style="width:100%;height:100%;object-fit:contain;" />`;
@@ -3301,7 +3301,7 @@
       return;
     }
     const printArea = byId("printArea");
-    const logoUrl = brandingSettings.companyLogo || logoPath || "/logo/NGO_logo_monogram.webp";
+    const logoUrl = brandingSettings.companyLogo || logoPath || "logo/NGO_logo_monogram.webp";
     printArea.innerHTML = `
       <div style="font-family:Arial,sans-serif;color:#0f172a;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;border-bottom:2px solid #0099F1;padding-bottom:10px;">
