@@ -132,21 +132,75 @@ Below is the exact folder structure comparison between your **Local Repository**
 
 ---
 
-## 3. Step-by-Step Hostinger hPanel Setup
+## 4. Step-by-Step Hostinger hPanel Setup & Automated Deployment Workflow
 
-1. **Subdomain:** Create subdomain `fuel` in hPanel pointing to `public_html/fuel`.
-2. **SSL:** Activate Free SSL for `fuel.atmabiswas.org` in hPanel -> Security -> SSL.
-3. **Database:** Create MySQL database & user, then import [`database/fuel_station.sql`](file:///Users/arafat/Desktop/Car/FuelStationSystem/database/fuel_station.sql) in phpMyAdmin.
-4. **Environment File:** Create `.env` in `public_html/fuel/.env` with database credentials.
-5. **Daily Cron Job:** In hPanel -> Cron Jobs, add a daily job (`0 0 * * *`):
-   ```bash
-   php /home/uXXXXXXXX/public_html/fuel/cron/photo_retention.php
-   ```
-6. **GitHub Actions Secrets:** Add `HOSTINGER_FTP_HOST`, `HOSTINGER_FTP_USER`, `HOSTINGER_FTP_PASSWORD` in GitHub Secrets. Pushing to `main` deploys and verifies health automatically!
+### Step 1 — Create the Subdomain
+In Hostinger hPanel:
+1. Navigate to **Websites** → **Manage** → **Domains** → **Subdomains**.
+2. Create Subdomain: `fuel`
+3. Document Root: `public_html/fuel`
+4. Enable **Free SSL** in hPanel → **Security** → **SSL**.
+5. After SSL installation, `https://fuel.atmabiswas.org` will be live.
+
+### Step 2 — Push Your Project to GitHub
+Push your local codebase to your GitHub repository `main` branch:
+```bash
+git add .
+git commit -m "Deploy Fuel Station System v1.0"
+git push origin main
+```
+
+### Step 3 — Create GitHub Actions Workflow
+The project includes `.github/workflows/deploy-sftp.yml` configured for Hostinger Shared Hosting deployment via SFTP/FTP.
+
+### Step 4 — Add GitHub Secrets
+In your GitHub Repository → **Settings** → **Secrets and variables** → **Actions**, add:
+* `HOSTINGER_HOST` (or `HOSTINGER_FTP_HOST`): `ftp.atmabiswas.org` (or server IP)
+* `HOSTINGER_USERNAME` (or `HOSTINGER_FTP_USER`): `uXXXXXXXX`
+* `HOSTINGER_PASSWORD` (or `HOSTINGER_FTP_PASSWORD`): `YourFTPPassword`
+* `HOSTINGER_PORT` (or `HOSTINGER_FTP_PORT`): `21` (or `22` for SFTP)
+
+### Step 5 — Target Deployment Folder & Exclusions
+The workflow targets `/public_html/fuel/` and automatically excludes persistent server assets:
+```yaml
+remote_path: "/public_html/fuel/"
+exclude: ".git*, .env, /uploads/*, /logs/*, /node-dev-archive/*"
+```
+
+### Step 6 — Automatic Deployment Execution
+Whenever you push code to `main`:
+1. GitHub Actions triggers automatically.
+2. Changes are uploaded to `public_html/fuel/`.
+3. Application updates instantly without opening Hostinger File Manager.
+
+### Step 7 — File Preservation & Security Guard
+The deployment workflow strictly preserves live server files:
+* `.env` (Database credentials & JWT secrets are never overwritten)
+* `uploads/` (User uploaded images stay intact)
+* `logs/` (Application activity logs stay intact)
+
+### Step 8 — Post-Deployment Verification (Health Check)
+GitHub Actions automatically verifies the live API status post-upload:
+```bash
+curl -s https://fuel.atmabiswas.org/api/v1/health
+```
+Expected response: `{"status":"OK","database":"Connected","storage":"Writable","version":"1.0.0"}`
+
+### Step 9 — Image Storage & 90-Day Retention Policy
+The Fuel System stores assets under organized subdirectories in `uploads/`:
+* `uploads/profile-photos/` — Driver & User profile pictures (**PERMANENT, NEVER DELETED**)
+* `uploads/fuel-receipts/` — Fuel machine & fuel receipt photos
+* `uploads/money-receipts/` — Money & payment receipt photos
+* `uploads/vehicle-photos/` — Vehicle & odometer photos
+* `uploads/signatures/` — Digital approval signatures
+
+**Automated 90-Day Cleanup Job (`cron/photo_retention.php`)**:
+* Deletes evidence photos older than 90 days (`fuel-receipts`, `money-receipts`, `vehicle-photos`).
+* **STRICT RULE**: Profile photos (`uploads/profile-photos/`) are **NEVER** automatically deleted by the cleanup job.
 
 ---
 
-## 4. Verified Hostinger Hosting Compatibility & Asset Hygiene
+## 5. Verified Hostinger Hosting Compatibility & Asset Hygiene
 
 All files, paths, and assets have been systematically audited and verified for Hostinger Linux production environment:
 
@@ -154,4 +208,5 @@ All files, paths, and assets have been systematically audited and verified for H
 2. **Relative Logo & Icon Paths**: Primary logo references (`logo/NGO_logo_monogram.webp`), favicons, PWA icons (`manifest.json`), and SVG icons in `client/assets/icons/` use relative paths to guarantee clean loading regardless of domain root vs. subfolder hosting.
 3. **Upload Directory Tracking**: Standardized upload subdirectories (`uploads/profile-photos/`, `uploads/money-receipts/`, `uploads/signatures/`, `uploads/vehicle-photos/`, `uploads/driver-photos/`, `uploads/logo/`, `uploads/fuel-receipts/`) are tracked with `.gitkeep` placeholders and secured with `uploads/.htaccess`.
 4. **Clean File Naming**: All image and icon extensions are strictly lowercase (`.webp`, `.png`, `.svg`) with zero spaces or illegal characters.
+
 
