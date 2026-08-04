@@ -840,19 +840,26 @@
       emptyEl.classList.add("hidden");
       $("#recentTable").classList.remove("hidden");
       tbody.innerHTML = recent.map((r) => `
-        <tr>
+        <tr data-id="${r.id}" style="cursor:pointer;">
           <td><strong>${r.id}</strong></td>
           <td>${formatDateDisplay(r.date)}</td>
           <td>${escapeHtml(r.driver)}</td>
           <td>${escapeHtml(r.vehicleNumber)}</td>
           <td>${formatMoney(r.totalAmount)}</td>
           <td>${statusBadgeHtml(r)}</td>
+          <td>
+            <div class="row-actions">
+              <button type="button" class="act-view" data-act="view" data-id="${r.id}" title="View"><i class="fa-solid fa-eye"></i></button>
+              <button type="button" class="act-edit" data-act="edit" data-id="${r.id}" title="${r.locked ? "Locked — click to request unlock" : "Edit"}"><i class="fa-solid ${r.locked ? "fa-lock" : "fa-pen"}"></i></button>
+              ${currentUser && currentUser.role === "admin" ? `<button type="button" class="act-delete" data-act="delete" data-id="${r.id}" title="Delete"><i class="fa-solid fa-trash"></i></button>` : ""}
+            </div>
+          </td>
         </tr>
       `).join("");
 
       if (recentCardsEl) {
         recentCardsEl.innerHTML = recent.map((r) => `
-          <div class="mobile-card" data-id="${r.id}">
+          <div class="mobile-card" data-id="${r.id}" style="cursor:pointer;">
             <div class="mobile-card-header">
               <div class="mobile-card-title">
                 <strong>${r.id}</strong>
@@ -895,13 +902,19 @@
       approvedEmptyEl.classList.add("hidden");
       $("#recentApprovedTable").classList.remove("hidden");
       approvedTbody.innerHTML = recentApproved.map((r) => `
-        <tr>
+        <tr data-id="${r.id}" style="cursor:pointer;">
           <td><strong>${r.id}</strong></td>
           <td>${escapeHtml(r.driver)}</td>
           <td>${escapeHtml(r.vehicleNumber)}</td>
           <td>${escapeHtml(r.approvedBy) || "-"}</td>
           <td>${formatTimestamp(r.signedAt)}</td>
           <td>${formatMoney(r.totalAmount)}</td>
+          <td>
+            <div class="row-actions">
+              <button type="button" class="act-view" data-act="view" data-id="${r.id}" title="View"><i class="fa-solid fa-eye"></i></button>
+              <button type="button" class="act-edit" data-act="edit" data-id="${r.id}" title="${r.locked ? "Locked — click to request unlock" : "Edit"}"><i class="fa-solid ${r.locked ? "fa-lock" : "fa-pen"}"></i></button>
+            </div>
+          </td>
         </tr>
       `).join("");
 
@@ -1866,18 +1879,29 @@
       if (thumb) { openImageModal(thumb.dataset.src, thumb.dataset.title); return; }
 
       const btn = e.target.closest("button[data-act]");
-      if (!btn) return;
-      e.preventDefault();
-      e.stopPropagation();
-      const act = btn.dataset.act;
-      const id = btn.dataset.id;
-      if (act === "view") openViewModal(id);
-      else if (act === "edit") editRecord(id);
-      else if (act === "delete") deleteRecord(id);
-      else if (act === "sign") openSignModal(id);
-      else if (act === "reviewFirst") openViewModal(id);
-      else if (act === "received") setFuelReceived(id, "received");
-      else if (act === "notreceived") setFuelReceived(id, "not_received");
+      if (btn) {
+        e.preventDefault();
+        e.stopPropagation();
+        const act = btn.dataset.act;
+        const id = btn.dataset.id;
+        if (act === "view") openViewModal(id);
+        else if (act === "edit") editRecord(id);
+        else if (act === "delete") deleteRecord(id);
+        else if (act === "sign") openSignModal(id);
+        else if (act === "reviewFirst") openViewModal(id);
+        else if (act === "received") setFuelReceived(id, "received");
+        else if (act === "notreceived") setFuelReceived(id, "not_received");
+        return;
+      }
+
+      const clickableItem = e.target.closest("tr[data-id], .mobile-card[data-id]");
+      if (clickableItem && !e.target.closest("a, button, input, select, textarea")) {
+        const id = clickableItem.dataset.id;
+        if (id) {
+          e.preventDefault();
+          openViewModal(id);
+        }
+      }
     });
 
     const debouncedRender = debounce(renderRecordsTable, 200);

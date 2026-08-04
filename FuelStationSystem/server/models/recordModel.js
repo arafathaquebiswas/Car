@@ -456,7 +456,7 @@ async function setFuelStatus(recordCode, status, actorName) {
   if (!["received", "not_received"].includes(status)) throw new ApiError(400, "Invalid fuel status.");
   const original = await getRawByCode(recordCode);
   if (!original) throw new ApiError(404, "Record not found.");
-  if (original.approval_status !== "approved") throw new ApiError(400, "Only approved records can have a fuel status.");
+  if (original.is_draft) throw new ApiError(400, "Draft records cannot have a fuel status set until submitted.");
 
   await pool.query("UPDATE fuel_records SET fuel_received = ? WHERE id = ?", [status, original.id]);
   await addHistory(
