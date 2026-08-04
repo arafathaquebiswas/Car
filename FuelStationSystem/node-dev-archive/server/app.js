@@ -144,19 +144,44 @@ for (const prefix of ["/api/v1", "/api"]) {
   );
 }
 
-// The frontend static assets and SPA fallback (index.html)
-const clientPath = path.join(__dirname, "..", "client");
+const fs = require("fs");
+
+// Dynamic resolution for clientPath across local workspace and production hosting
+function resolveClientPath() {
+  const candidates = [
+    path.join(__dirname, "..", "client"),
+    path.join(__dirname, "client"),
+    path.join(process.cwd(), "client"),
+    path.join(process.cwd(), "..", "client"),
+  ];
+  for (const candidate of candidates) {
+    if (fs.existsSync(path.join(candidate, "index.html"))) {
+      return candidate;
+    }
+  }
+  return path.join(__dirname, "..", "client");
+}
+
+const clientPath = resolveClientPath();
 app.use(express.static(clientPath));
 
 app.get("/", (req, res) => {
-  res.sendFile(path.join(clientPath, "index.html"));
+  const indexPath = path.join(clientPath, "index.html");
+  if (!fs.existsSync(indexPath)) {
+    return res.status(404).send("<h1>Frontend Client Not Found</h1><p>Please verify that the <code>client/</code> directory containing <code>index.html</code> is present.</p>");
+  }
+  res.sendFile(indexPath);
 });
 
 app.get("*", (req, res, next) => {
   if (req.path.startsWith("/api") || req.path.startsWith("/uploads")) {
     return next();
   }
-  res.sendFile(path.join(clientPath, "index.html"));
+  const indexPath = path.join(clientPath, "index.html");
+  if (!fs.existsSync(indexPath)) {
+    return res.status(404).send("<h1>Frontend Client Not Found</h1><p>Please verify that the <code>client/</code> directory containing <code>index.html</code> is present.</p>");
+  }
+  res.sendFile(indexPath);
 });
 
 app.use("/api", notFoundHandler);
