@@ -726,12 +726,12 @@ if ($route === 'settings') {
     $user = require_auth();
     if ($method === 'GET') {
         $stmt = $pdo->query("SELECT * FROM settings WHERE id = 1");
-        $settings = $stmt->fetch() ?: ['office_name' => 'City Office — Vehicle Fuel Desk', 'currency_symbol' => '৳', 'theme' => 'auto'];
+        $settings = $stmt->fetch() ?: ['office_name' => 'ATMABISWAS Fuel', 'currency_symbol' => '৳', 'theme' => 'auto'];
         send_json(['success' => true, 'settings' => $settings]);
     }
     if ($method === 'PUT') {
         require_admin();
-        $office_name = $_POST['officeName'] ?? $_POST['office_name'] ?? 'City Office — Vehicle Fuel Desk';
+        $office_name = $_POST['officeName'] ?? $_POST['office_name'] ?? 'ATMABISWAS Fuel';
         $currency_symbol = $_POST['currencySymbol'] ?? $_POST['currency_symbol'] ?? '৳';
         $logo_path = handle_upload('logo', 'logo');
 
@@ -832,7 +832,7 @@ if ($route === 'records') {
         $hStmt->execute([$recId, $isDraft ? 'Saved as Draft' : 'Created', $user['username'], $isDraft ? 'Fuel record saved as a draft.' : 'Fuel record created.']);
 
         if (!$isDraft) {
-            notify_roles(['sir', 'admin'], 'New Fuel Request Submitted', "Driver '{$driverName}' submitted Fuel Request {$code}.", 'approval', $code);
+            notify_roles(['sir', 'admin'], 'Fuel Request Submitted', "⛽ Fuel request {$code} submitted successfully by driver '{$driverName}'.", 'approval', $code);
         }
 
         $getStmt = $pdo->prepare("SELECT r.*, d.name AS driver_name, s.name AS sir_name, ft.name AS fuel_type_name FROM fuel_records r JOIN drivers d ON d.id = r.driver_id LEFT JOIN office_sirs s ON s.id = r.sir_id LEFT JOIN fuel_types ft ON ft.id = r.fuel_type_id WHERE r.id = ?");
@@ -906,6 +906,40 @@ if (preg_match('#^records/([A-Z0-9-]+)/approve$#', $route, $m) && $method === 'P
     $hStmt = $pdo->prepare("INSERT INTO approval_history (record_id, action, performed_by, note) VALUES (?, 'Approved & Signed', ?, 'Record reviewed and signed off.')");
     $hStmt->execute([$rec['id'], $user['full_name']]);
 
+    // Driver notification
+    $dUserId = $pdo->query("SELECT id FROM users WHERE driver_id = " . (int)$rec['driver_id'])->fetchColumn();
+    if ($dUserId) {
+        create_notification($dUserId, 'Fuel Request Approved', "✅ Your fuel request {$code} has been approved.", 'success', $code);
+    }
+
+    $getStmt = $pdo->prepare("SELECT r.*, d.name AS driver_name, s.name AS sir_name, ft.name AS fuel_type_name FROM fuel_records r JOIN drivers d ON d.id = r.driver_id LEFT JOIN office_sirs s ON s.id = r.sir_id LEFT JOIN fuel_types ft ON ft.id = r.fuel_type_id WHERE r.id = ?");
+    $getStmt->execute([$rec['id']]);
+    send_json(['success' => true, 'data' => row_to_record_api($getStmt->fetch(), $pdo)]);
+}
+
+// Reject Endpoint (/api/v1/records/:code/reject)
+if (preg_match('#^records/([A-Z0-9-]+)/reject$#', $route, $m) && $method === 'POST') {
+    $user = require_auth();
+    $code = $m[1];
+
+    $stmt = $pdo->prepare("SELECT * FROM fuel_records WHERE record_code = ? LIMIT 1");
+    $stmt->execute([$code]);
+    $rec = $stmt->fetch();
+
+    $remarks = $_POST['officeRemarks'] ?? 'Request rejected by office.';
+
+    $pdo->prepare("UPDATE fuel_records SET approval_status = 'rejected', office_remarks = ?, is_locked = 1 WHERE id = ?")
+        ->execute([$remarks, $rec['id']]);
+
+    $hStmt = $pdo->prepare("INSERT INTO approval_history (record_id, action, performed_by, note) VALUES (?, 'Rejected', ?, ?)");
+    $hStmt->execute([$rec['id'], $user['full_name'], $remarks]);
+
+    // Driver notification
+    $dUserId = $pdo->query("SELECT id FROM users WHERE driver_id = " . (int)$rec['driver_id'])->fetchColumn();
+    if ($dUserId) {
+        create_notification($dUserId, 'Fuel Request Rejected', "❌ Your fuel request {$code} has been rejected.", 'error', $code);
+    }
+
     $getStmt = $pdo->prepare("SELECT r.*, d.name AS driver_name, s.name AS sir_name, ft.name AS fuel_type_name FROM fuel_records r JOIN drivers d ON d.id = r.driver_id LEFT JOIN office_sirs s ON s.id = r.sir_id LEFT JOIN fuel_types ft ON ft.id = r.fuel_type_id WHERE r.id = ?");
     $getStmt->execute([$rec['id']]);
     send_json(['success' => true, 'data' => row_to_record_api($getStmt->fetch(), $pdo)]);
@@ -916,17 +950,23 @@ if (preg_match('#^records/([A-Z0-9-]+)/unlock$#', $route, $m) && $method === 'PO
     require_admin();
     $code = $m[1];
 
-    $stmt = $pdo->prepare("SELECT id FROM fuel_records WHERE record_code = ? LIMIT 1");
+    $stmt = $pdo->prepare("SELECT id, driver_id FROM fuel_records WHERE record_code = ? LIMIT 1");
     $stmt->execute([$code]);
-    $recId = $stmt->fetchColumn();
+    $rec = $stmt->fetch();
 
-    $pdo->prepare("UPDATE fuel_records SET is_locked = 0 WHERE id = ?")->execute([$recId]);
+    $pdo->prepare("UPDATE fuel_records SET is_locked = 0 WHERE id = ?")->execute([$rec['id']]);
 
     $hStmt = $pdo->prepare("INSERT INTO approval_history (record_id, action, performed_by, note) VALUES (?, 'Unlocked', ?, 'Record unlocked by administrator.')");
-    $hStmt->execute([$recId, $user['username']]);
+    $hStmt->execute([$rec['id'], $user['username']]);
+
+    // Driver notification
+    $dUserId = $pdo->query("SELECT id FROM users WHERE driver_id = " . (int)$rec['driver_id'])->fetchColumn();
+    if ($dUserId) {
+        create_notification($dUserId, 'Fuel Request Unlocked', "🔓 Your request {$code} has been unlocked by the administrator.", 'info', $code);
+    }
 
     $getStmt = $pdo->prepare("SELECT r.*, d.name AS driver_name, s.name AS sir_name, ft.name AS fuel_type_name FROM fuel_records r JOIN drivers d ON d.id = r.driver_id LEFT JOIN office_sirs s ON s.id = r.sir_id LEFT JOIN fuel_types ft ON ft.id = r.fuel_type_id WHERE r.id = ?");
-    $getStmt->execute([$recId]);
+    $getStmt->execute([$rec['id']]);
     send_json(['success' => true, 'data' => row_to_record_api($getStmt->fetch(), $pdo)]);
 }
 

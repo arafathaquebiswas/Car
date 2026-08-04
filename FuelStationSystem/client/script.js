@@ -10,7 +10,7 @@
 
   /* ============ CONSTANTS ============ */
   // Fallback display values used only until /api/settings has loaded.
-  const DEFAULT_OFFICE_NAME = "City Office — Vehicle Fuel Desk";
+  const DEFAULT_OFFICE_NAME = "ATMABISWAS Fuel";
   const DEFAULT_CURRENCY = "৳";
 
   const IMG_MAX_WIDTH = 900;
@@ -488,7 +488,7 @@
 
     if (currentPage) {
       const pageTitle = PAGE_LABELS[currentPage] || currentPage.charAt(0).toUpperCase() + currentPage.slice(1);
-      document.title = `${pageTitle} | ${title}`;
+      document.title = `${pageTitle} | ATMABISWAS Fuel | Vehicle Fuel Management System`;
     }
 
     const logoUrl = brandingSettings.companyLogo || logoPath || "logo/NGO_logo_monogram.webp";

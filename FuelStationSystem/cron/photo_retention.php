@@ -52,8 +52,14 @@ foreach ($rows as $row) {
         $uStmt->execute([$row['id']]);
 
         $hStmt = $pdo->prepare("INSERT INTO approval_history (record_id, action, performed_by, note) VALUES (?, 'Photo Retention Purge', 'System', ?)");
-        $note = "Evidence photos (" . implode(', ', $types) . ") automatically deleted after 90 days per retention policy.";
+        $note = "📷 Photo evidence has been removed according to the 90-day retention policy.";
         $hStmt->execute([$row['id'], $note]);
+
+        // Send notification to driver if linked user exists
+        $dUserId = $pdo->query("SELECT id FROM users WHERE driver_id = " . (int)($row['driver_id'] ?? 0))->fetchColumn();
+        if ($dUserId) {
+            create_notification($dUserId, 'Photo Evidence Removed', "📷 Photo evidence has been removed according to the 90-day retention policy.", 'info', $row['record_code']);
+        }
 
         $recordsPurged++;
     }
