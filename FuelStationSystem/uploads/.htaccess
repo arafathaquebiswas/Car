@@ -1,0 +1,17 @@
+# Disable script execution inside uploads
+Options -ExecCGI -Indexes
+
+<IfModule mod_php7.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+
+SetHandler default-handler
+RemoveHandler .php .phtml .php3 .php4 .php5 .php7 .phps .cgi .pl .py .asp .aspx .jsp
+
+<FilesMatch "\.(php|phtml|php3|php4|php5|php7|phps|cgi|pl|py|asp|aspx|jsp|sh|exe)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>

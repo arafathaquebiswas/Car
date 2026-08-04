@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+<meta name="robots" content="noindex, nofollow" />
+<meta name="theme-color" content="#0099F1" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta property="og:title" content="ATMABISWAS Fuel" />
+<meta property="og:description" content="Internal Vehicle Fuel Management System" />
+<meta property="og:site_name" content="ATMABISWAS" />
+<title>ATMABISWAS Fuel</title>
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" type="image/webp" href="/logo/NGO_logo_monogram.webp" />
+<link rel="shortcut icon" type="image/webp" href="/logo/NGO_logo_monogram.webp" />
+<link rel="apple-touch-icon" href="/logo/NGO_logo_monogram.webp" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<a href="#content" class="skip-link">Skip to main content</a>
+
+<!-- ==================== LOGIN SCREEN ==================== -->
+<div id="loginScreen" class="login-screen">
+  <div class="login-bg-shapes">
+    <span class="shape shape1"></span>
+    <span class="shape shape2"></span>
+    <span class="shape shape3"></span>
+  </div>
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="logo-badge brand-logo-slot" style="width:96px;height:96px;background:transparent;box-shadow:none;margin:0 auto 12px;"><img src="/logo/NGO_logo_monogram.webp" class="brand-logo-img" alt="ATMABISWAS Logo" style="width:100%;height:100%;object-fit:contain;" /></div>
+      <h1>ATMABISWAS <span>Fuel</span></h1>
+      <p>Vehicle Fuel Management System</p>
+    </div>
+    <form id="loginForm" class="login-form">
+      <div class="input-group">
+        <i class="fa-solid fa-user"></i>
+        <input type="text" id="loginUsername" placeholder="Username" autocomplete="username" required />
+      </div>
+      <div class="input-group">
+        <i class="fa-solid fa-lock"></i>
+        <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password" required />
+      </div>
+      <p id="loginError" class="login-error"></p>
+      <button type="submit" class="btn btn-primary btn-block">
+        <i class="fa-solid fa-right-to-bracket"></i> Sign In
+      </button>
+      <p class="login-hint">Default admin account: <strong>admin</strong> / <strong>admin123</strong> — change this after first login.</p>
+      <div style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:16px;">
+        © 2026 ATMABISWAS. All Rights Reserved.<br />Powered by <strong>ATMABISWAS ICT</strong>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ==================== APP SHELL ==================== -->
+<div id="appShell" class="app-shell hidden">
+
+  <!-- Top Progress Bar & Offline Network Banner -->
+  <div id="topProgressBar" class="top-progress-bar hidden"></div>
+  <div id="offlineBanner" class="offline-banner hidden" role="alert" aria-live="assertive">
+    <i class="fa-solid fa-wifi-slash"></i>
+    <span>No Internet Connection — Connection lost. Submissions temporarily disabled.</span>
+  </div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-badge small brand-logo-slot" style="width:42px;height:42px;background:transparent;box-shadow:none;"><img src="/logo/NGO_logo_monogram.webp" class="brand-logo-img" alt="ATMABISWAS Logo" style="width:100%;height:100%;object-fit:contain;" /></div>
+      <div class="sidebar-title">
+        <strong>ATMABISWAS Fuel</strong>
+        <span>ATMABISWAS Enterprise</span>
+      </div>
+      <button class="sidebar-close" id="sidebarClose"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="#dashboard" class="nav-link active" data-page="dashboard" data-nav-role="admin,sir,driver">
+        <i class="fa-solid fa-gauge-high"></i> <span>Dashboard</span>
+      </a>
+      <a href="#add" class="nav-link" data-page="add" data-nav-role="admin,driver">
+        <i class="fa-solid fa-circle-plus"></i> <span>Add Fuel Request</span>
+      </a>
+      <a href="#records" class="nav-link" data-page="records" data-nav-role="admin,sir,driver">
+        <i class="fa-solid fa-table-list"></i> <span id="navRecordsLabel">All Requests</span>
+      </a>
+      <a href="#reports" class="nav-link" data-page="reports" data-nav-role="admin,sir">
+        <i class="fa-solid fa-calendar-days"></i> <span>Reports</span>
+      </a>
+      <a href="#users" class="nav-link" data-page="users" data-nav-role="admin">
+        <i class="fa-solid fa-users-gear"></i> <span>User Management</span>
+      </a>
+      <a href="#settings" class="nav-link" data-page="settings" data-nav-role="admin">
+        <i class="fa-solid fa-sliders"></i> <span>Settings</span>
+      </a>
+      <a href="#profile" class="nav-link" data-page="profile" data-nav-role="admin,sir,driver">
+        <i class="fa-solid fa-id-card"></i> <span>Profile</span>
+      </a>
+      <a href="#notifications" class="nav-link" data-page="notifications" data-nav-role="admin,sir,driver">
+        <i class="fa-solid fa-bell"></i> <span>Notifications</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button id="logoutBtn" class="btn btn-ghost btn-block">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+      </button>
+    </div>
+  </aside>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- Main -->
+  <div class="main-wrap">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="icon-btn" id="sidebarToggle"><i class="fa-solid fa-bars"></i></button>
+        <div class="logo-badge small brand-logo-slot" style="width:36px;height:36px;background:transparent;box-shadow:none;margin-right:6px;"><img src="/logo/NGO_logo_monogram.webp" class="brand-logo-img" alt="ATMABISWAS Logo" style="width:100%;height:100%;object-fit:contain;" /></div>
+        <div>
+          <div class="office-name" id="officeNameDisplay">ATMABISWAS — Vehicle Fuel Desk</div>
+          <div class="breadcrumb" id="breadcrumb">
+            <span>Dashboard</span>
+          </div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="search-box topbar-search">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="globalSearch" placeholder="Search driver, vehicle, station..." />
+        </div>
+        <div class="notif-bell-wrapper" style="position:relative;">
+          <button class="icon-btn" id="notifBellBtn" title="Notifications" style="position:relative;">
+            <i class="fa-solid fa-bell"></i>
+            <span class="notif-badge-count hidden" id="notifBadgeCount">0</span>
+          </button>
+          <div class="notif-dropdown hidden" id="notifDropdown">
+            <div class="notif-dropdown-header">
+              <strong><i class="fa-solid fa-bell"></i> Notifications</strong>
+              <button type="button" class="btn-link" id="notifMarkAllReadBtn" style="font-size:12px;cursor:pointer;background:none;border:none;color:var(--primary);font-weight:600;">Mark all read</button>
+            </div>
+            <div class="notif-dropdown-body" id="notifDropdownList">
+              <div class="notif-empty"><i class="fa-solid fa-bell-slash"></i><span>No notifications</span></div>
+            </div>
+            <div class="notif-dropdown-footer">
+              <button type="button" class="btn btn-outline btn-sm" id="notifViewAllBtn" style="width:100%;font-weight:700;"><i class="fa-solid fa-list-ul"></i> View All Notifications</button>
+            </div>
+          </div>
+        </div>
+        <button class="icon-btn" id="darkModeToggle" title="Toggle dark mode">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+        <div class="user-chip">
+          <div class="avatar" id="userAvatar">A</div>
+          <span id="loggedUserLabel">Admin</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Mobile Full-Width Search Row -->
+    <div class="mobile-search-row" id="mobileSearchRow">
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="mobileGlobalSearch" placeholder="Search driver, vehicle, station..." />
+      </div>
+    </div>
+
+    <main class="content" id="content">
+
+      <!-- ============ PAGE: DASHBOARD ============ -->
+      <section class="page active" id="page-dashboard">
+        <div class="page-header">
+          <h2><i class="fa-solid fa-gauge-high"></i> Dashboard</h2>
+          <p>Overview of fuel requests</p>
+        </div>
+
+        <div class="stat-grid">
+          <div class="stat-card" data-dash-role="admin">
+            <div class="stat-icon blue"><i class="fa-solid fa-file-lines"></i></div>
+            <div class="stat-info">
+              <span class="stat-value" id="statTotal">0</span>
+              <span class="stat-label">Total Requests</span>
+            </div>
+          </div>
+          <div class="stat-card" data-dash-role="admin,sir,driver">
+            <div class="stat-icon amber"><i class="fa-solid fa-hourglass-half"></i></div>
+            <div class="stat-info">
+              <span class="stat-value" id="statPending">0</span>
+              <span class="stat-label" id="statPendingLabel">Pending</span>
+            </div>
+          </div>
+          <div class="stat-card" data-dash-role="admin,sir,driver">
+            <div class="stat-icon green"><i class="fa-solid fa-circle-check"></i></div>
+            <div class="stat-info">
+              <span class="stat-value" id="statApproved">0</span>
+              <span class="stat-label">Approved</span>
+            </div>
+          </div>
+          <div class="stat-card" data-dash-role="admin,sir,driver">
+            <div class="stat-icon blue"><i class="fa-solid fa-gas-pump"></i></div>
+            <div class="stat-info">
+              <span class="stat-value" id="statLiters">0 L</span>
+              <span class="stat-label">Total Liters</span>
+            </div>
+          </div>
+          <div class="stat-card" data-dash-role="admin,sir">
+            <div class="stat-icon amber"><i class="fa-solid fa-money-bill-wave"></i></div>
+            <div class="stat-info">
+              <span class="stat-value" id="statMonthCost">৳0.00</span>
+              <span class="stat-label">Monthly Cost</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h3>Recent Requests</h3>
+            <a href="#records" class="link-btn" data-page="records">View all <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+          <div class="table-scroll">
+            <table class="data-table" id="recentTable">
+              <thead>
+                <tr><th>ID</th><th>Date</th><th>Driver</th><th>Vehicle</th><th>Amount</th><th>Status</th></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div class="mobile-card-list" id="recentMobileCards"></div>
+          <div class="empty-state hidden" id="recentEmpty">
+            <i class="fa-solid fa-inbox"></i>
+            <p>No fuel requests yet</p>
+            <a href="#add" class="btn btn-primary btn-sm" data-page="add" data-dash-role="admin,driver">Add First Request</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h3>Recently Approved</h3>
+            <a href="#records" class="link-btn" data-page="records">View all <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+          <div class="table-scroll">
+            <table class="data-table" id="recentApprovedTable">
+              <thead>
+                <tr><th>ID</th><th>Driver</th><th>Vehicle</th><th>Approved By</th><th>Approved On</th><th>Amount</th></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div class="mobile-card-list" id="recentApprovedMobileCards"></div>
+          <div class="empty-state hidden" id="recentApprovedEmpty">
+            <i class="fa-solid fa-inbox"></i>
+            <p>No approved requests yet</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ PAGE: ADD RECORD ============ -->
+      <section class="page" id="page-add">
+        <div class="page-header">
+          <h2><i class="fa-solid fa-circle-plus"></i> <span id="formTitle">Add New Fuel Request</span></h2>
+          <p>Fill in the details of the fuel collection</p>
+        </div>
+
+        <!-- Shown only while editing a record that is already approved & signed -->
+        <div class="edit-approved-notice hidden" id="editApprovedNotice">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          <span>This request is already <strong>approved &amp; signed</strong>. Changing key details (driver, vehicle, fuel type, quantity, price, or either photo) will automatically revoke the approval and require re-signing. Editing only remarks will NOT affect the approval.</span>
+        </div>
+
+        <form id="fuelForm" class="card form-card" novalidate>
+          <input type="hidden" id="recordId" />
+
+          <div class="form-grid">
+            <div class="form-field">
+              <label>Date <span class="req">*</span></label>
+              <input type="date" id="fDate" required />
+              <span class="field-error" id="err-fDate"></span>
+            </div>
+            <div class="form-field">
+              <label>Driver Name <span class="req">*</span></label>
+              <select id="fDriver" required>
+                <option value="">Select driver</option>
+              </select>
+              <span class="field-error" id="err-fDriver"></span>
+            </div>
+
+            <div class="form-field">
+              <label>Vehicle Number <span class="req">*</span></label>
+              <input type="text" id="fVehicle" placeholder="e.g. DHAKA-METRO-GA-1234" required />
+              <span class="field-error" id="err-fVehicle"></span>
+            </div>
+            <div class="form-field">
+              <label>Fuel Station</label>
+              <input type="text" id="fStationName" placeholder="e.g. Padma Filling Station" list="stationsDatalist" autocomplete="off" />
+              <datalist id="stationsDatalist"></datalist>
+            </div>
+
+            <div class="form-field">
+              <label>Fuel Type <span class="req">*</span></label>
+              <select id="fFuelType" required>
+                <option value="">Select fuel type</option>
+              </select>
+              <span class="field-error" id="err-fFuelType"></span>
+            </div>
+            <div class="form-field">
+              <label>Fuel Quantity (Liters) <span class="req">*</span></label>
+              <input type="number" id="fLiters" min="0" step="0.01" placeholder="0.00" required />
+              <span class="field-error" id="err-fLiters"></span>
+            </div>
+
+            <div class="form-field">
+              <label id="priceLabel">Price Per Liter (৳)</label>
+              <input type="number" id="fPrice" min="0" step="0.01" placeholder="0.00" />
+              <span class="field-error" id="err-fPrice"></span>
+            </div>
+            <div class="form-field">
+              <label id="totalLabel">Total Amount (৳)</label>
+              <input type="text" id="fTotal" readonly placeholder="Auto calculated" />
+            </div>
+
+            <div class="form-field full">
+              <label>Remarks <span class="optional-tag">(optional)</span></label>
+              <textarea id="fRemarks" rows="3" placeholder="Any additional notes..."></textarea>
+            </div>
+          </div>
+
+          <div class="upload-grid">
+            <div class="upload-field">
+              <label>Fuel Machine Display Photo <span class="req">*</span></label>
+              <p class="upload-hint">Must clearly show Liters, Price per Liter, and Total Amount on the pump's display.</p>
+              <div class="upload-box" id="uploadBox1">
+                <input type="file" id="fFuelReceiptImg" accept="image/*" hidden />
+                <input type="file" id="fFuelReceiptImgCapture" accept="image/*" capture="environment" hidden />
+                <div class="upload-placeholder" id="placeholder1">
+                  <i class="fa-solid fa-cloud-arrow-up"></i>
+                  <span>Take a photo or choose from your files</span>
+                </div>
+                <img id="preview1" class="upload-preview hidden" />
+                <button type="button" class="remove-img hidden" id="remove1"><i class="fa-solid fa-xmark"></i></button>
+              </div>
+              <div class="upload-actions">
+                <button type="button" class="btn btn-outline btn-sm upload-camera-btn" data-target="1"><i class="fa-solid fa-camera"></i> Open Camera</button>
+                <button type="button" class="btn btn-outline btn-sm upload-gallery-btn" data-target="1"><i class="fa-solid fa-folder-open"></i> Choose from Gallery / Files</button>
+              </div>
+              <span class="field-error" id="err-fFuelReceiptImg"></span>
+            </div>
+
+            <div class="upload-field">
+              <label>Money Receipt Photo <span class="req">*</span></label>
+              <p class="upload-hint">The cash memo / receipt given by the fuel station for the money received.</p>
+              <div class="upload-box" id="uploadBox2">
+                <input type="file" id="fMoneyReceiptImg" accept="image/*" hidden />
+                <input type="file" id="fMoneyReceiptImgCapture" accept="image/*" capture="environment" hidden />
+                <div class="upload-placeholder" id="placeholder2">
+                  <i class="fa-solid fa-cloud-arrow-up"></i>
+                  <span>Take a photo or choose from your files</span>
+                </div>
+                <img id="preview2" class="upload-preview hidden" />
+                <button type="button" class="remove-img hidden" id="remove2"><i class="fa-solid fa-xmark"></i></button>
+              </div>
+              <div class="upload-actions">
+                <button type="button" class="btn btn-outline btn-sm upload-camera-btn" data-target="2"><i class="fa-solid fa-camera"></i> Open Camera</button>
+                <button type="button" class="btn btn-outline btn-sm upload-gallery-btn" data-target="2"><i class="fa-solid fa-folder-open"></i> Choose from Gallery / Files</button>
+              </div>
+            <div class="upload-field" id="driverPhotoField">
+              <label>Driver Photo <span class="help-text" style="font-size: 0.8rem; color: var(--primary);">(Auto-populated from Profile)</span></label>
+              <p class="upload-hint">Automatically loaded from your Driver Profile picture. Read-only.</p>
+              <div class="upload-box readonly-box" id="driverPhotoBox" style="pointer-events: none; cursor: default; background: var(--surface-subtle); display: flex; align-items: center; justify-content: center; height: 140px; border-style: solid;">
+                <img id="fDriverPhotoPreview" class="upload-preview hidden" alt="Driver profile photo" style="max-height: 120px; object-fit: contain; border-radius: 8px;" />
+                <div id="fDriverPhotoPlaceholder" class="upload-placeholder">
+                  <i class="fa-solid fa-circle-user" style="font-size: 42px; color: var(--text-soft);"></i>
+                  <span style="font-size: 0.85rem; margin-top: 6px; color: var(--text-muted);">Default Avatar (No profile picture set)</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" id="resetFormBtn">
+              <i class="fa-solid fa-rotate-left"></i> Reset
+            </button>
+            <button type="button" class="btn btn-outline" id="saveDraftBtn">
+              <i class="fa-solid fa-pen"></i> Save as Draft
+            </button>
+            <button type="submit" class="btn btn-primary" id="saveRecordBtn">
+              <i class="fa-solid fa-paper-plane"></i> Submit Request
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- ============ PAGE: RECORDS ============ -->
+      <section class="page" id="page-records">
+        <div class="page-header">
+          <h2><i class="fa-solid fa-table-list"></i> <span id="recordsPageTitle">All Fuel Requests</span></h2>
+          <p id="recordsPageSubtitle">Search, filter, approve and manage records</p>
+        </div>
+
+        <div class="card toolbar-card">
+          <div class="toolbar">
+            <div class="search-box">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="recordsSearch" placeholder="Search by ID, driver, vehicle, station, date, amount..." />
+            </div>
+            <div class="filters">
+              <select id="filterStatus">
+                <option value="">All Approval</option>
+                <option value="draft">Draft</option>
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+              </select>
+              <select id="filterReceived">
+                <option value="">All Fuel Status</option>
+                <option value="received">Received</option>
+                <option value="not_received">Not Received</option>
+                <option value="unset">Not Set</option>
+              </select>
+              <select id="filterDriver">
+                <option value="">All Drivers</option>
+              </select>
+              <input type="date" id="filterDate" title="Filter by date" />
+              <button class="btn btn-ghost btn-sm" id="clearFilters"><i class="fa-solid fa-filter-circle-xmark"></i> Clear</button>
+            </div>
+          </div>
+          <div class="toolbar-export">
+            <button class="btn btn-outline btn-sm" id="exportPdfBtn"><i class="fa-solid fa-file-pdf"></i> Export PDF</button>
+            <button class="btn btn-outline btn-sm" id="exportExcelBtn"><i class="fa-solid fa-file-excel"></i> Export Excel</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <!-- Skeleton Loading Placeholder -->
+          <div id="recordsSkeleton" class="skeleton-container hidden">
+            <div class="skeleton-card-row"></div>
+            <div class="skeleton-card-row"></div>
+            <div class="skeleton-card-row"></div>
+          </div>
+
+          <!-- Desktop / Tablet Table View -->
+          <div class="table-scroll" id="recordsTableScroll">
+            <table class="data-table" id="recordsTable">
+              <thead>
+                <tr>
+                  <th>ID</th><th>Date</th><th>Driver</th><th>Vehicle</th>
+                  <th>Fuel</th><th>Liters</th><th>Total</th><th>Machine Photo Preview</th>
+                  <th>Money Receipt Preview</th><th>Machine Photo</th><th>Money Receipt</th>
+                  <th>Status</th><th>Approval</th><th>Fuel Status</th><th>Actions</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+
+          <!-- Mobile Touch-Optimized Cards Container -->
+          <div class="mobile-card-list" id="recordsMobileCards"></div>
+
+          <div class="empty-state hidden" id="recordsEmpty">
+            <i class="fa-solid fa-inbox"></i>
+            <p>No fuel requests found</p>
+            <a href="#add" class="btn btn-primary btn-sm" data-page="add">Add Fuel Request</a>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ============ PAGE: REPORTS ============ -->
+      <section class="page" id="page-reports">
+        <div class="page-header">
+          <h2><i class="fa-solid fa-calendar-days"></i> Reports</h2>
+          <p>Monthly, date range, driver, vehicle, and fuel station reports</p>
+        </div>
+
+        <div class="card toolbar-card">
+          <div class="toolbar">
+            <div class="form-field" style="max-width:170px;">
+              <label>Report Type</label>
+              <select id="reportType">
+                <option value="monthly">Monthly</option>
+                <option value="range">Date Range</option>
+                <option value="driver">By Driver</option>
+                <option value="vehicle">By Vehicle</option>
+                <option value="station">By Fuel Station</option>
+              </select>
+            </div>
+
+            <div class="form-field report-filter" data-for="monthly" style="max-width:170px;">
+              <label>Month</label>
+              <input type="month" id="reportMonth" />
+            </div>
+            <div class="form-field report-filter hidden" data-for="range" style="max-width:150px;">
+              <label>From</label>
+              <input type="date" id="reportFrom" />
+            </div>
+            <div class="form-field report-filter hidden" data-for="range" style="max-width:150px;">
+              <label>To</label>
+              <input type="date" id="reportTo" />
+            </div>
+            <div class="form-field report-filter hidden" data-for="driver" style="max-width:190px;">
+              <label>Driver</label>
+              <select id="reportDriverSelect"></select>
+            </div>
+            <div class="form-field report-filter hidden" data-for="vehicle" style="max-width:190px;">
+              <label>Vehicle Number</label>
+              <select id="reportVehicleSelect"></select>
+            </div>
+            <div class="form-field report-filter hidden" data-for="station" style="max-width:190px;">
+              <label>Fuel Station</label>
+              <select id="reportStationSelect"></select>
+            </div>
+
+            <button class="btn btn-primary btn-sm report-generate-btn" id="generateReportBtn">
+              <i class="fa-solid fa-magnifying-glass-chart"></i> Generate
+            </button>
+          </div>
+          <div class="toolbar-export">
+            <button class="btn btn-outline btn-sm" id="printReportBtn"><i class="fa-solid fa-print"></i> Print</button>
+            <button class="btn btn-outline btn-sm" id="reportPdfBtn"><i class="fa-solid fa-file-pdf"></i> Export PDF</button>
+            <button class="btn btn-outline btn-sm" id="reportExcelBtn"><i class="fa-solid fa-file-excel"></i> Export Excel</button>
+          </div>
+        </div>
+
+        <div class="stat-grid" id="reportStatGrid">
+          <div class="stat-card">
+            <div class="stat-icon blue"><i class="fa-solid fa-file-lines"></i></div>
+            <div class="stat-info">
+              <span class="stat-value" id="reportStatRecords">0</span>
+              <span class="stat-label">Requests in Report</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon green"><i class="fa-solid fa-gas-pump"></i></div>
+            <div class="stat-info">
+              <span class="stat-value" id="reportStatLiters">0</span>
+              <span class="stat-label">Total Liters</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon amber"><i class="fa-solid fa-money-bill-wave"></i></div>
+            <div class="stat-info">
+              <span class="stat-value" id="reportStatCost">৳0.00</span>
+              <span class="stat-label">Total Cost</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-grid two-col">
+          <div class="card">
+            <div class="card-header"><h3>Driver-wise Totals</h3></div>
+            <div class="table-scroll">
+              <table class="data-table" id="reportDriverTable">
+                <thead><tr><th>Driver</th><th>Requests</th><th>Liters</th><th>Total Cost</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+            <div class="mobile-card-list" id="reportDriverMobileCards"></div>
+            <div class="empty-state hidden" id="reportDriverEmpty">
+              <i class="fa-solid fa-inbox"></i>
+              <p>No matching requests</p>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>Fuel Type Summary</h3></div>
+            <div class="table-scroll">
+              <table class="data-table" id="reportFuelTable">
+                <thead><tr><th>Fuel Type</th><th>Requests</th><th>Liters</th><th>Total Cost</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+            <div class="mobile-card-list" id="reportFuelMobileCards"></div>
+            <div class="empty-state hidden" id="reportFuelEmpty">
+              <i class="fa-solid fa-inbox"></i>
+              <p>No matching requests</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h3>Matching Requests</h3></div>
+          <div class="table-scroll">
+            <table class="data-table" id="reportRecordsTable">
+              <thead><tr><th>ID</th><th>Date</th><th>Driver</th><th>Vehicle</th><th>Station</th><th>Fuel</th><th>Liters</th><th>Total</th><th>Machine Photo</th><th>Money Receipt</th><th>Status</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div class="mobile-card-list" id="reportRecordsMobileCards"></div>
+          <div class="empty-state hidden" id="reportRecordsEmpty">
+            <i class="fa-solid fa-inbox"></i>
+            <p>No matching requests</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ PAGE: SETTINGS ============ -->
+      <section class="page" id="page-settings">
+        <div class="page-header">
+          <h2><i class="fa-solid fa-sliders"></i> Settings</h2>
+          <p>Manage drivers and app preferences</p>
+        </div>
+
+        <div class="dash-grid two-col">
+          <div class="card">
+            <div class="card-header"><h3>Drivers</h3></div>
+            <div class="settings-list" id="driverList"></div>
+            <div class="settings-add" data-role-admin>
+              <input type="text" id="newDriverInput" placeholder="Add new driver name" />
+              <button class="btn btn-primary btn-sm" id="addDriverBtn"><i class="fa-solid fa-plus"></i> Add</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header"><h3>Default Fuel Types</h3></div>
+            <div class="settings-list" id="fuelTypeList"></div>
+            <div class="settings-add" data-role-admin>
+              <input type="text" id="newFuelTypeInput" placeholder="e.g. CNG" />
+              <button class="btn btn-primary btn-sm" id="addFuelTypeBtn"><i class="fa-solid fa-plus"></i> Add</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>Default Fuel Stations</h3></div>
+            <div class="settings-list" id="stationList"></div>
+            <div class="settings-add" data-role-admin>
+              <input type="text" id="newStationInput" placeholder="e.g. Padma Filling Station" />
+              <button class="btn btn-primary btn-sm" id="addStationBtn"><i class="fa-solid fa-plus"></i> Add</button>
+            </div>
+          </div>
+
+          <div class="card" data-role-admin>
+            <div class="card-header"><h3>Preferences</h3></div>
+            <div class="form-field">
+              <label>Theme</label>
+              <select id="settingsTheme">
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+                <option value="auto">Auto (follow system)</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label>Currency Symbol</label>
+              <input type="text" id="settingsCurrency" maxlength="5" placeholder="e.g. ৳, $, €, ₹" />
+            </div>
+            <button class="btn btn-primary btn-sm settings-save-btn" id="savePreferencesBtn"><i class="fa-solid fa-floppy-disk"></i> Save Preferences</button>
+          </div>
+
+          <div class="card" data-role-admin style="grid-column: 1 / -1;">
+            <div class="card-header"><h3><i class="fa-solid fa-building"></i> Centralized Enterprise System Branding</h3></div>
+            <p class="muted">Configure system-wide company branding, headers, footers, logos, and contact information used across all pages, print reports, and PDF exports.</p>
+            
+            <div class="branding-logo-row" style="margin-bottom:20px;">
+              <div class="logo-badge brand-logo-slot" id="settingsLogoPreview" style="width:64px;height:64px;background:transparent;box-shadow:none;"><img src="/logo/NGO_logo_monogram.webp" class="brand-logo-img" alt="ATMABISWAS Logo" style="width:100%;height:100%;object-fit:contain;" /></div>
+              <div class="branding-logo-actions">
+                <input type="file" id="logoUploadInput" accept="image/*" hidden />
+                <button type="button" class="btn btn-outline btn-sm" id="logoUploadBtn"><i class="fa-solid fa-upload"></i> Upload Logo</button>
+                <button type="button" class="btn btn-ghost btn-sm" id="logoRemoveBtn"><i class="fa-solid fa-trash"></i> Remove Logo</button>
+                <p class="help-text" style="font-size: 0.8rem; margin-top: 4px; color: var(--text-muted);">PNG, JPG, WEBP, or SVG company logo</p>
+              </div>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-field">
+                <label>Company Name <span class="req">*</span></label>
+                <input type="text" id="settingsCompanyName" placeholder="e.g. ATMABISWAS" required />
+              </div>
+              <div class="form-field">
+                <label>Short System Name <span class="req">*</span></label>
+                <input type="text" id="settingsShortName" placeholder="e.g. ATMABISWAS Fuel" required />
+              </div>
+              <div class="form-field">
+                <label>Office / System Title</label>
+                <input type="text" id="settingsOfficeName" placeholder="e.g. ATMABISWAS — Vehicle Fuel Desk" />
+              </div>
+              <div class="form-field">
+                <label>Website URL</label>
+                <input type="text" id="settingsWebsite" placeholder="e.g. atmabiswas.org" />
+              </div>
+              <div class="form-field">
+                <label>Official Phone Number</label>
+                <input type="text" id="settingsPhone" placeholder="e.g. +8801712345678" />
+              </div>
+              <div class="form-field">
+                <label>Official Email</label>
+                <input type="email" id="settingsEmail" placeholder="e.g. info@atmabiswas.org" />
+              </div>
+              <div class="form-field full">
+                <label>Head Office Address</label>
+                <input type="text" id="settingsAddress" placeholder="Physical office street address" />
+              </div>
+              <div class="form-field full">
+                <label>Footer Copyright Text</label>
+                <input type="text" id="settingsFooterCopyright" placeholder="e.g. © 2026 ATMABISWAS. All Rights Reserved. Powered by ATMABISWAS ICT" />
+              </div>
+              <div class="form-field full">
+                <label>Printable Report Header Text</label>
+                <textarea id="settingsReportHeader" rows="2" placeholder="Custom header banner printed on top of all reports and exported PDFs"></textarea>
+              </div>
+              <div class="form-field full">
+                <label>Printable Footer Text</label>
+                <textarea id="settingsPrintFooter" rows="2" placeholder="Custom footer text printed at the bottom of exported reports"></textarea>
+              </div>
+            </div>
+            <button class="btn btn-primary btn-sm settings-save-btn" id="saveOfficeNameBtn" style="margin-top:16px;"><i class="fa-solid fa-floppy-disk"></i> Save Centralized System Branding</button>
+          </div>
+
+          <div class="card" data-role-admin>
+            <div class="card-header"><h3>Backup &amp; Restore</h3></div>
+            <p class="muted">Export all data (requests, drivers, sirs, fuel types, stations, branding, preferences) to a JSON file, or restore from a previously exported file.</p>
+            <div class="backup-actions">
+              <button class="btn btn-outline btn-sm" id="backupJsonBtn"><i class="fa-solid fa-download"></i> Backup (Export JSON)</button>
+              <input type="file" id="restoreJsonInput" accept="application/json" hidden />
+              <button class="btn btn-outline btn-sm" id="restoreJsonBtn"><i class="fa-solid fa-upload"></i> Restore (Import JSON)</button>
+            </div>
+          </div>
+
+          <div class="card" data-role-admin>
+            <div class="card-header"><h3>Danger Zone</h3></div>
+            <p class="muted">This will permanently delete all fuel requests, drivers, and sirs from this browser.</p>
+            <button class="btn btn-danger btn-sm" id="clearAllDataBtn"><i class="fa-solid fa-trash"></i> Clear All Data</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ PAGE: USER MANAGEMENT ============ -->
+      <section class="page" id="page-users">
+        <div class="page-header">
+          <h2><i class="fa-solid fa-users-gear"></i> User Management</h2>
+          <p>Create and manage Admin, Sir, and Driver accounts</p>
+        </div>
+
+        <div class="card toolbar-card">
+          <div class="toolbar">
+            <div class="search-box">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="userSearch" placeholder="Search by name, username, email, employee ID..." />
+            </div>
+            <div class="filters">
+              <select id="userFilterRole">
+                <option value="">All Roles</option>
+                <option value="admin">Admin</option>
+                <option value="sir">Sir</option>
+                <option value="driver">Driver</option>
+              </select>
+              <select id="userFilterStatus">
+                <option value="">All Status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+          </div>
+          <div class="toolbar-export">
+            <button class="btn btn-primary btn-sm" id="addUserBtn"><i class="fa-solid fa-user-plus"></i> Add User</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="table-scroll">
+            <table class="data-table" id="usersTable">
+              <thead>
+                <tr><th>Photo</th><th>Full Name</th><th>Username</th><th>Role</th><th>Status</th><th>Last Login</th><th>Actions</th></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div class="mobile-card-list" id="usersMobileCards"></div>
+          <div class="empty-state hidden" id="usersEmpty">
+            <i class="fa-solid fa-user-slash"></i>
+            <p>No users found</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ PAGE: PROFILE ============ -->
+      <section class="page" id="page-profile">
+        <div class="page-header">
+          <h2><i class="fa-solid fa-id-card"></i> My Profile</h2>
+          <p>View and manage your user account, security, and contact details</p>
+        </div>
+
+        <div class="dash-grid two-col">
+          <!-- Account Details & Contact Card -->
+          <div class="card">
+            <div class="card-header"><h3>Account &amp; Profile Details</h3></div>
+            <form id="profileForm">
+              <div class="profile-avatar-row">
+                <div class="avatar-upload-box" id="profileAvatarBox" title="Click to upload profile photo">
+                  <img id="profileAvatarPreview" class="hidden" alt="Profile photo" />
+                  <i class="fa-solid fa-user" id="profileAvatarPlaceholder"></i>
+                  <input type="file" id="profilePhotoInput" accept="image/jpeg,image/jpg,image/png,image/webp" hidden />
+                </div>
+                <div class="profile-avatar-actions">
+                  <button type="button" class="btn btn-outline btn-sm" id="profilePhotoBtn"><i class="fa-solid fa-camera"></i> Change Photo</button>
+                  <button type="button" class="btn btn-ghost btn-sm" id="profilePhotoRemoveBtn"><i class="fa-solid fa-trash"></i> Remove</button>
+                  <p class="help-text" style="font-size: 0.8rem; margin-top: 4px; color: var(--text-muted);">JPG, PNG or WEBP (Max 5 MB)</p>
+                </div>
+              </div>
+
+              <div class="form-grid">
+                <div class="form-field">
+                  <label>Full Name <span class="req">*</span></label>
+                  <input type="text" id="profileFullName" required />
+                </div>
+                <div class="form-field">
+                  <label>Username <span class="help-text">(Read-only)</span></label>
+                  <input type="text" id="profileUsername" disabled readonly />
+                </div>
+                <div class="form-field">
+                  <label>Role <span class="help-text">(Read-only)</span></label>
+                  <input type="text" id="profileRole" disabled readonly />
+                </div>
+                <div class="form-field">
+                  <label>Employee ID <span class="help-text">(Read-only)</span></label>
+                  <input type="text" id="profileEmployeeId" disabled readonly />
+                </div>
+                <div class="form-field">
+                  <label>Account Status <span class="help-text">(Read-only)</span></label>
+                  <input type="text" id="profileStatus" disabled readonly />
+                </div>
+                <div class="form-field">
+                  <label>Account Created Date <span class="help-text">(Read-only)</span></label>
+                  <input type="text" id="profileCreatedAt" disabled readonly />
+                </div>
+                <div class="form-field">
+                  <label>Last Login Time <span class="help-text">(Read-only)</span></label>
+                  <input type="text" id="profileLastLogin" disabled readonly />
+                </div>
+                <div class="form-field">
+                  <label>Phone Number <span class="req">*</span></label>
+                  <input type="text" id="profilePhone" placeholder="e.g. 01712345678 or +8801712345678" required />
+                  <p class="help-text" style="font-size: 0.78rem; color: var(--text-muted);">Must be a valid Bangladesh mobile number.</p>
+                </div>
+                <div class="form-field">
+                  <label>Email Address</label>
+                  <input type="email" id="profileEmail" placeholder="e.g. user@example.com" />
+                </div>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-sm" id="saveProfileBtn"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Security & Change Password Card -->
+          <div class="card">
+            <div class="card-header"><h3>Security &amp; Password Change</h3></div>
+            <form id="changePasswordForm">
+              <div class="form-field">
+                <label>Current Password <span class="req">*</span></label>
+                <input type="password" id="profileCurrentPassword" autocomplete="current-password" required />
+              </div>
+              <div class="form-field">
+                <label>New Password <span class="req">*</span></label>
+                <input type="password" id="profileNewPassword" autocomplete="new-password" minlength="8" required />
+                <p class="help-text" style="font-size: 0.78rem; color: var(--text-muted);">Minimum 8 characters. Cannot reuse current password.</p>
+              </div>
+              <div class="form-field">
+                <label>Confirm New Password <span class="req">*</span></label>
+                <input type="password" id="profileConfirmPassword" autocomplete="new-password" minlength="8" required />
+              </div>
+              <span class="field-error" id="profilePasswordError"></span>
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-sm" id="changePasswordBtn"><i class="fa-solid fa-key"></i> Change Password</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Extended Driver Profile & Document Management Card -->
+        <div class="card" id="driverProfileCard" style="margin-top: 24px;">
+          <div class="card-header">
+            <h3><i class="fa-solid fa-id-card-clip"></i> Driver Profile, NID &amp; Driving License Documents</h3>
+            <div id="driverVerificationBadge"></div>
+          </div>
+          <form id="driverProfileForm">
+            <h4 style="margin:16px 0 10px;font-size:14px;color:var(--primary);"><i class="fa-solid fa-user-gear"></i> Personal &amp; Emergency Contact Information</h4>
+            <div class="form-grid">
+              <div class="form-field">
+                <label>Date of Birth</label>
+                <input type="date" id="driverDob" />
+              </div>
+              <div class="form-field">
+                <label>Gender</label>
+                <select id="driverGender">
+                  <option value="">Select Gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label>Blood Group</label>
+                <select id="driverBloodGroup">
+                  <option value="">Select Blood Group</option>
+                  <option value="A+">A+</option>
+                  <option value="A-">A-</option>
+                  <option value="B+">B+</option>
+                  <option value="B-">B-</option>
+                  <option value="O+">O+</option>
+                  <option value="O-">O-</option>
+                  <option value="AB+">AB+</option>
+                  <option value="AB-">AB-</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label>Emergency Contact Name</label>
+                <input type="text" id="driverEmergencyName" placeholder="Contact person full name" />
+              </div>
+              <div class="form-field">
+                <label>Emergency Contact Number</label>
+                <input type="text" id="driverEmergencyNumber" placeholder="Emergency phone number" />
+              </div>
+              <div class="form-field full">
+                <label>Present Address</label>
+                <textarea id="driverPresentAddress" rows="2" placeholder="Current residential address"></textarea>
+              </div>
+              <div class="form-field full">
+                <label>Permanent Address</label>
+                <textarea id="driverPermanentAddress" rows="2" placeholder="Permanent village/city address"></textarea>
+              </div>
+            </div>
+
+            <h4 style="margin:24px 0 10px;font-size:14px;color:var(--primary);"><i class="fa-solid fa-address-card"></i> National ID (NID) Record &amp; Proof Photos</h4>
+            <div class="form-grid">
+              <div class="form-field">
+                <label>NID Number <span class="req">*</span></label>
+                <input type="text" id="driverNidNumber" placeholder="10, 13, or 17 digit NID number" />
+              </div>
+              <div class="form-field">
+                <label>NID Issue Date</label>
+                <input type="date" id="driverNidIssueDate" />
+              </div>
+              <div class="form-field">
+                <label>NID Expiry Date (If applicable)</label>
+                <input type="date" id="driverNidExpiryDate" />
+              </div>
+            </div>
+            <div class="upload-grid" style="margin-top:14px;">
+              <div class="upload-field">
+                <label>NID Front Image</label>
+                <div class="upload-box" id="nidFrontBox" onclick="byId('nidFrontInput').click()">
+                  <img id="nidFrontPreview" class="hidden" alt="NID Front" style="width:100%;height:100%;object-fit:cover;" />
+                  <div class="upload-placeholder" id="nidFrontPlaceholder">
+                    <i class="fa-solid fa-id-card"></i>
+                    <span>Click to Upload NID Front Image</span>
+                  </div>
+                  <input type="file" id="nidFrontInput" accept="image/*" hidden />
+                </div>
+              </div>
+              <div class="upload-field">
+                <label>NID Back Image</label>
+                <div class="upload-box" id="nidBackBox" onclick="byId('nidBackInput').click()">
+                  <img id="nidBackPreview" class="hidden" alt="NID Back" style="width:100%;height:100%;object-fit:cover;" />
+                  <div class="upload-placeholder" id="nidBackPlaceholder">
+                    <i class="fa-solid fa-id-card"></i>
+                    <span>Click to Upload NID Back Image</span>
+                  </div>
+                  <input type="file" id="nidBackInput" accept="image/*" hidden />
+                </div>
+              </div>
+            </div>
+
+            <h4 style="margin:24px 0 10px;font-size:14px;color:var(--primary);"><i class="fa-solid fa-id-badge"></i> Driving License Information &amp; Photos</h4>
+            <div class="form-grid">
+              <div class="form-field">
+                <label>Driving License Number <span class="req">*</span></label>
+                <input type="text" id="driverLicenseNumber" placeholder="BRTA Driving License number" />
+              </div>
+              <div class="form-field">
+                <label>License Category / Class</label>
+                <select id="driverLicenseCategory">
+                  <option value="">Select Category</option>
+                  <option value="Light">Light Vehicle</option>
+                  <option value="Medium">Medium Vehicle</option>
+                  <option value="Heavy">Heavy Vehicle</option>
+                  <option value="Professional">Professional</option>
+                  <option value="Non-Professional">Non-Professional</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label>Issuing Authority</label>
+                <input type="text" id="driverLicenseAuthority" placeholder="e.g. BRTA Dhaka Metro" />
+              </div>
+              <div class="form-field">
+                <label>Issue Date</label>
+                <input type="date" id="driverLicenseIssueDate" />
+              </div>
+              <div class="form-field">
+                <label>Expiry Date <span class="req">*</span></label>
+                <input type="date" id="driverLicenseExpiryDate" />
+              </div>
+            </div>
+            <div class="upload-grid" style="margin-top:14px;">
+              <div class="upload-field">
+                <label>License Front Image</label>
+                <div class="upload-box" id="licenseFrontBox" onclick="byId('licenseFrontInput').click()">
+                  <img id="licenseFrontPreview" class="hidden" alt="License Front" style="width:100%;height:100%;object-fit:cover;" />
+                  <div class="upload-placeholder" id="licenseFrontPlaceholder">
+                    <i class="fa-solid fa-address-card"></i>
+                    <span>Click to Upload License Front</span>
+                  </div>
+                  <input type="file" id="licenseFrontInput" accept="image/*" hidden />
+                </div>
+              </div>
+              <div class="upload-field">
+                <label>License Back Image</label>
+                <div class="upload-box" id="licenseBackBox" onclick="byId('licenseBackInput').click()">
+                  <img id="licenseBackPreview" class="hidden" alt="License Back" style="width:100%;height:100%;object-fit:cover;" />
+                  <div class="upload-placeholder" id="licenseBackPlaceholder">
+                    <i class="fa-solid fa-address-card"></i>
+                    <span>Click to Upload License Back</span>
+                  </div>
+                  <input type="file" id="licenseBackInput" accept="image/*" hidden />
+                </div>
+              </div>
+            </div>
+
+            <div class="form-actions" style="margin-top:20px;">
+              <button type="submit" class="btn btn-primary btn-sm" id="saveDriverDocsBtn"><i class="fa-solid fa-cloud-arrow-up"></i> Save Driver Profile &amp; Documents</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Audit History Card -->
+        <div class="card" style="margin-top: 24px;">
+          <div class="card-header">
+            <h3><i class="fa-solid fa-clock-rotate-left"></i> Profile Security &amp; Audit History</h3>
+          </div>
+          <div class="table-responsive">
+            <table class="table" id="profileAuditTable">
+              <thead>
+                <tr>
+                  <th>Date &amp; Time</th>
+                  <th>Action</th>
+                  <th>IP Address</th>
+                  <th>Note / Details</th>
+                </tr>
+              </thead>
+              <tbody id="profileAuditBody">
+                <tr><td colspan="4" class="text-center text-muted">Loading audit history...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ PAGE: NOTIFICATIONS ============ -->
+      <section class="page" id="page-notifications">
+        <div class="page-header">
+          <h2><i class="fa-solid fa-bell"></i> Notifications History &amp; Center</h2>
+          <p>Real-time system alerts, reminders, escalation warnings, and notification preferences</p>
+        </div>
+
+        <div class="card toolbar-card">
+          <div class="toolbar" style="flex-wrap:wrap;gap:10px;">
+            <div class="search-box" style="flex:1;min-width:200px;">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="notifSearch" placeholder="Search notification title, message, record code..." />
+            </div>
+            <div class="filters" style="display:flex;gap:8px;flex-wrap:wrap;">
+              <select id="notifFilterType">
+                <option value="">All Categories</option>
+                <option value="approval">Approval</option>
+                <option value="rejection">Rejection</option>
+                <option value="reminder">Reminder</option>
+                <option value="warning">Warning</option>
+                <option value="error">Error</option>
+                <option value="success">Success</option>
+                <option value="info">Info</option>
+                <option value="system">System</option>
+              </select>
+              <select id="notifFilterStatus">
+                <option value="">All Read Status</option>
+                <option value="0">Unread Only</option>
+                <option value="1">Read Only</option>
+              </select>
+              <button type="button" class="btn btn-secondary btn-sm" id="notifClearReadBtn">
+                <i class="fa-solid fa-broom"></i> Clear Read
+              </button>
+              <button type="button" class="btn btn-outline btn-sm" id="notifOpenPrefBtn">
+                <i class="fa-solid fa-gear"></i> Preferences
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card p-0">
+          <div id="notifHistoryContainer" class="notif-history-list" style="padding:16px;">
+            <p class="text-center text-muted p-3">Loading notifications...</p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ==================== MOBILE BOTTOM NAVIGATION ==================== -->
+    <nav class="bottom-nav" id="bottomNav" aria-label="Mobile Navigation">
+      <a href="#dashboard" class="bottom-nav-item active" data-page="dashboard" data-nav-role="admin,sir,driver">
+        <i class="fa-solid fa-gauge-high"></i>
+        <span>Dashboard</span>
+      </a>
+      <a href="#records" class="bottom-nav-item" data-page="records" data-nav-role="admin,sir,driver">
+        <i class="fa-solid fa-table-list"></i>
+        <span>Requests</span>
+      </a>
+      <a href="#add" class="bottom-nav-item bottom-nav-fab" data-page="add" data-nav-role="admin,driver" title="Add Request">
+        <i class="fa-solid fa-plus"></i>
+      </a>
+      <a href="#notifications" class="bottom-nav-item" data-page="notifications" data-nav-role="admin,sir,driver">
+        <i class="fa-solid fa-bell"></i>
+        <span>Alerts</span>
+      </a>
+      <a href="#profile" class="bottom-nav-item" data-page="profile" data-nav-role="admin,sir,driver">
+        <i class="fa-solid fa-id-card"></i>
+        <span>Profile</span>
+      </a>
+    </nav>
+
+  </div>
+</div>
+
+<!-- ==================== MODAL: VIEW RECORD ==================== -->
+<div class="modal-overlay hidden" id="viewModal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h3><i class="fa-solid fa-file-lines"></i> Request Details <span id="viewModalId" class="badge-id"></span></h3>
+      <button class="icon-btn" id="closeViewModal"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body" id="viewModalBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline btn-sm" id="printRecordBtn"><i class="fa-solid fa-print"></i> Print</button>
+      <button class="btn btn-secondary btn-sm" id="closeViewModalBtn">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MODAL: SIGNATURE ==================== -->
+<div class="modal-overlay hidden" id="signModal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h3><i class="fa-solid fa-signature"></i> Approve &amp; Sign</h3>
+      <button class="icon-btn" id="closeSignModal"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <p class="muted">Both mandatory photos have been reviewed. Check the request summary below, then sign to approve.</p>
+
+      <div class="sign-summary" id="signSummary"></div>
+
+      <div class="sign-review-images">
+        <figure>
+          <img id="signFuelReceiptImg" alt="Fuel machine display photo" />
+          <figcaption>Fuel Machine Display Photo</figcaption>
+        </figure>
+        <figure>
+          <img id="signMoneyReceiptImg" alt="Money receipt photo" />
+          <figcaption>Money Receipt Photo</figcaption>
+        </figure>
+      </div>
+
+      <div class="form-field">
+        <label>Approver Name <span class="req">*</span></label>
+        <input type="text" id="signApproverName" placeholder="Name of the person approving this request" />
+      </div>
+      <div class="form-field">
+        <label>Office Remarks <span class="optional-tag">(optional, separate from driver's remarks)</span></label>
+        <textarea id="signOfficeRemarks" rows="2" placeholder="Any notes from the office sir at approval time..."></textarea>
+      </div>
+
+      <label class="sign-pad-label">Signature <span class="req">*</span></label>
+      <canvas id="signatureCanvas" class="signature-canvas"></canvas>
+      <div class="sign-actions">
+        <button class="btn btn-ghost btn-sm" id="clearSignBtn"><i class="fa-solid fa-eraser"></i> Clear</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary btn-sm" id="cancelSignBtn">Cancel</button>
+      <button class="btn btn-primary btn-sm" id="saveSignBtn"><i class="fa-solid fa-check"></i> Save Signature</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MODAL: IMAGE ENLARGE ==================== -->
+<div class="modal-overlay hidden" id="imgModal">
+  <div class="modal modal-img">
+    <div class="modal-header">
+      <h3 id="imgModalTitle">Image</h3>
+      <button class="icon-btn" id="closeImgModal"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body img-modal-body" id="imgModalBody">
+      <img id="imgModalImage" src="" alt="preview" />
+    </div>
+    <div class="modal-footer">
+      <div class="zoom-controls">
+        <button type="button" class="icon-btn" id="zoomOutBtn" title="Zoom out"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+        <span class="zoom-level" id="zoomLevel">100%</span>
+        <button type="button" class="icon-btn" id="zoomInBtn" title="Zoom in"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+        <button type="button" class="icon-btn" id="zoomResetBtn" title="Reset zoom"><i class="fa-solid fa-arrows-rotate"></i></button>
+      </div>
+      <a class="btn btn-primary btn-sm" id="downloadImgBtn" download><i class="fa-solid fa-download"></i> Download</a>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MODAL: PROMPT (replaces browser prompt()) ==================== -->
+<div class="modal-overlay hidden" id="promptModal">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <h3 id="promptTitle"><i class="fa-solid fa-pen"></i> Enter Value</h3>
+      <button class="icon-btn" id="closePromptModal"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <p id="promptMessage" class="muted"></p>
+      <div class="input-group prompt-input-group">
+        <input type="text" id="promptInput" placeholder="" />
+      </div>
+      <span class="field-error" id="promptError"></span>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary btn-sm" id="promptCancelBtn">Cancel</button>
+      <button class="btn btn-primary btn-sm" id="promptOkBtn"><i class="fa-solid fa-check"></i> Add</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MODAL: CONFIRM ==================== -->
+<div class="modal-overlay hidden" id="confirmModal">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <h3 id="confirmTitle"><i class="fa-solid fa-triangle-exclamation"></i> Confirm</h3>
+      <button class="icon-btn" id="closeConfirmModal"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <p id="confirmMessage">Are you sure?</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary btn-sm" id="confirmCancelBtn">Cancel</button>
+      <button class="btn btn-danger btn-sm" id="confirmOkBtn">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MODAL: CAMERA CAPTURE ==================== -->
+<div class="modal-overlay hidden" id="cameraModal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h3 id="cameraModalTitle"><i class="fa-solid fa-camera"></i> Take Photo</h3>
+      <button class="icon-btn" id="closeCameraModal"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body camera-modal-body">
+      <video id="cameraVideo" autoplay playsinline muted></video>
+      <canvas id="cameraCanvas" class="hidden"></canvas>
+      <img id="cameraCapturedPreview" class="hidden" alt="Captured photo" />
+      <p id="cameraError" class="camera-error hidden"></p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary btn-sm" id="cameraCancelBtn">Cancel</button>
+      <button type="button" class="btn btn-outline btn-sm hidden" id="cameraRetakeBtn"><i class="fa-solid fa-rotate-left"></i> Retake</button>
+      <button type="button" class="btn btn-primary btn-sm" id="cameraCaptureBtn"><i class="fa-solid fa-camera"></i> Capture Photo</button>
+      <button type="button" class="btn btn-primary btn-sm hidden" id="cameraSaveBtn"><i class="fa-solid fa-check"></i> Use This Photo</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MODAL: USER (Create/Edit) ==================== -->
+<div class="modal-overlay hidden" id="userModal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h3 id="userModalTitle"><i class="fa-solid fa-user-plus"></i> Add User</h3>
+      <button class="icon-btn" id="closeUserModal"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <form id="userForm" novalidate>
+        <input type="hidden" id="uId" />
+
+        <div class="profile-avatar-row">
+          <div class="avatar-upload-box" id="userAvatarBox">
+            <img id="userAvatarPreview" class="hidden" alt="Profile photo" />
+            <i class="fa-solid fa-user" id="userAvatarPlaceholder"></i>
+            <input type="file" id="userPhotoInput" accept="image/*" hidden />
+          </div>
+          <div class="profile-avatar-actions">
+            <button type="button" class="btn btn-outline btn-sm" id="userPhotoBtn"><i class="fa-solid fa-camera"></i> Choose Photo</button>
+            <button type="button" class="btn btn-ghost btn-sm" id="userPhotoRemoveBtn"><i class="fa-solid fa-trash"></i> Remove</button>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-field">
+            <label>Full Name <span class="req">*</span></label>
+            <input type="text" id="uFullName" required />
+            <span class="field-error" id="err-uFullName"></span>
+          </div>
+          <div class="form-field">
+            <label>Username <span class="req">*</span></label>
+            <input type="text" id="uUsername" required autocomplete="off" />
+            <span class="field-error" id="err-uUsername"></span>
+          </div>
+          <div class="form-field" id="uPasswordField">
+            <label>Password <span class="req">*</span></label>
+            <input type="password" id="uPassword" autocomplete="new-password" />
+            <span class="field-error" id="err-uPassword"></span>
+          </div>
+          <div class="form-field">
+            <label>Role <span class="req">*</span></label>
+            <select id="uRole" required>
+              <option value="">Select role</option>
+              <option value="admin">Admin</option>
+              <option value="sir">Sir</option>
+              <option value="driver">Driver</option>
+            </select>
+            <span class="field-error" id="err-uRole"></span>
+          </div>
+          <div class="form-field">
+            <label>Phone Number</label>
+            <input type="text" id="uPhone" />
+          </div>
+          <div class="form-field">
+            <label>Email <span class="optional-tag">(optional)</span></label>
+            <input type="email" id="uEmail" />
+          </div>
+          <div class="form-field">
+            <label>Employee ID <span class="optional-tag">(optional)</span></label>
+            <input type="text" id="uEmployeeId" />
+            <span class="field-error" id="err-uEmployeeId"></span>
+          </div>
+        </div>
+
+        <div class="form-grid role-field-group hidden" id="driverFieldsGroup">
+          <div class="form-field full">
+            <label>Vehicle Number(s) <span class="optional-tag">(comma separated)</span></label>
+            <input type="text" id="uVehicleNumbers" placeholder="e.g. DHAKA-METRO-GA-1234, DHAKA-METRO-KHA-5678" />
+          </div>
+          <div class="form-field">
+            <label>Default Fuel Type <span class="optional-tag">(optional)</span></label>
+            <select id="uDefaultFuelType"><option value="">None</option></select>
+          </div>
+        </div>
+
+        <div class="form-grid role-field-group hidden" id="sirFieldsGroup">
+          <div class="form-field">
+            <label>Department <span class="optional-tag">(optional)</span></label>
+            <input type="text" id="uDepartment" />
+          </div>
+          <div class="form-field">
+            <label>Designation <span class="optional-tag">(optional)</span></label>
+            <input type="text" id="uDesignation" />
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary btn-sm" id="cancelUserModal">Cancel</button>
+      <button class="btn btn-primary btn-sm" id="saveUserBtn"><i class="fa-solid fa-floppy-disk"></i> Save User</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MODAL: NOTIFICATION PREFERENCES ==================== -->
+<div class="modal-backdrop hidden" id="notifPrefModal">
+  <div class="modal-card modal-sm">
+    <div class="modal-header">
+      <h3><i class="fa-solid fa-sliders"></i> Notification Preferences</h3>
+      <button class="modal-close" id="closeNotifPrefModal"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <form id="notifPrefForm">
+        <div class="pref-item" style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
+          <div>
+            <strong>In-App Notifications</strong>
+            <p class="help-text" style="font-size:0.8rem;color:var(--text-muted);">Receive real-time alerts in navbar &amp; notification center</p>
+          </div>
+          <input type="checkbox" id="prefInApp" checked style="width:20px;height:20px;" />
+        </div>
+        <div class="pref-item" style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
+          <div>
+            <strong>Browser / Toast Sound Alerts</strong>
+            <p class="help-text" style="font-size:0.8rem;color:var(--text-muted);">Show desktop toast popups when new notifications arrive</p>
+          </div>
+          <input type="checkbox" id="prefBrowser" checked style="width:20px;height:20px;" />
+        </div>
+        <div class="pref-item" style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
+          <div>
+            <strong>Email Alerts <span class="badge badge-unset">Future</span></strong>
+            <p class="help-text" style="font-size:0.8rem;color:var(--text-muted);">Send copies to user email address</p>
+          </div>
+          <input type="checkbox" id="prefEmail" disabled style="width:20px;height:20px;" />
+        </div>
+        <div class="pref-item" style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;">
+          <div>
+            <strong>SMS Alerts <span class="badge badge-unset">Future</span></strong>
+            <p class="help-text" style="font-size:0.8rem;color:var(--text-muted);">Send SMS alerts to Bangladesh phone number</p>
+          </div>
+          <input type="checkbox" id="prefSms" disabled style="width:20px;height:20px;" />
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary btn-sm" id="cancelNotifPrefModal">Cancel</button>
+      <button class="btn btn-primary btn-sm" id="saveNotifPrefBtn"><i class="fa-solid fa-floppy-disk"></i> Save Preferences</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PRINT AREA (hidden, used only for printing) ==================== -->
+<div id="printArea" class="print-area"></div>
+
+<!-- ==================== TOASTS ==================== -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ==================== LOADING OVERLAY ==================== -->
+<div class="loading-overlay hidden" id="loadingOverlay">
+  <div class="loading-box">
+    <div class="spinner"></div>
+    <span id="loadingLabel">Processing...</span>
+  </div>
+</div>
+
+<!-- Libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="api.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

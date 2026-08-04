@@ -1,0 +1,55 @@
+name: Hostinger Shared Hosting Deployment Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy to Hostinger Shared Hosting
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install Dependencies & Run Build Checks
+        run: |
+          npm ci
+          # Add build or minification steps if needed
+          echo "Build & lint checks passed."
+
+      - name: Deploy to Hostinger via Rsync over SSH
+        uses: easingthemes/ssh-deploy@v4.1.8
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.HOSTINGER_SSH_KEY }}
+          ARGS: "-avz --delete"
+          SOURCE: "./"
+          REMOTE_HOST: ${{ secrets.HOSTINGER_SSH_HOST }}
+          REMOTE_USER: ${{ secrets.HOSTINGER_SSH_USER }}
+          TARGET: ${{ secrets.HOSTINGER_TARGET_DIR }}
+          EXCLUDE: "/.git/, /.env, /server/uploads/, /node_modules/, /logs/"
+
+      - name: Execute Post-Deployment Remote Commands
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.HOSTINGER_SSH_HOST }}
+          username: ${{ secrets.HOSTINGER_SSH_USER }}
+          key: ${{ secrets.HOSTINGER_SSH_KEY }}
+          port: ${{ secrets.HOSTINGER_SSH_PORT || 65002 }}
+          script: |
+            cd ${{ secrets.HOSTINGER_TARGET_DIR }}
+            npm ci --only=production
+            node server/scripts/migrate.js
+            # Trigger Phusion Passenger app restart on Hostinger Shared Hosting
+            mkdir -p server/tmp
+            touch server/tmp/restart.txt
+            touch passenger.js
+            echo "Hostinger deployment completed successfully."

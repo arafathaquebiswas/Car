@@ -1,0 +1,18 @@
+{
+  "name": "ATMABISWAS Fuel",
+  "short_name": "ATMABISWAS Fuel",
+  "description": "ATMABISWAS Internal Enterprise Fuel Management System",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0b1220",
+  "theme_color": "#0099F1",
+  "icons": [
+    {
+      "src": "/logo/NGO_logo_monogram.webp",
+      "sizes": "192x192 512x512",
+      "type": "image/webp",
+      "purpose": "any maskable"
+    }
+  ]
+}

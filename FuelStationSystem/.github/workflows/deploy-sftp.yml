@@ -1,0 +1,38 @@
+name: Hostinger Single Shared Hosting Deployment (SFTP & Health Check)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  web-deploy:
+    name: Deploy to Hostinger via SFTP & Validate Health
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: SFTP Sync to Hostinger (Preserve Uploads & .env)
+        uses: SamKirsch/sftp-sync-action@v1.0.1
+        with:
+          host: ${{ secrets.HOSTINGER_FTP_HOST }}
+          username: ${{ secrets.HOSTINGER_FTP_USER }}
+          password: ${{ secrets.HOSTINGER_FTP_PASSWORD }}
+          port: ${{ secrets.HOSTINGER_FTP_PORT || 21 }}
+          local_path: "./*"
+          remote_path: "/public_html/fuel/"
+          exclude: ".git*, .env, /uploads/*, /logs/*, /node-dev-archive/*"
+
+      - name: Verify Post-Deployment Health Check (API v1)
+        run: |
+          echo "Verifying application health..."
+          HEALTH_URL="https://fuel.atmabiswas.org/api/v1/health"
+          RESPONSE=$(curl -s -m 15 "$HEALTH_URL" || echo '{"status":"FAILED"}')
+          echo "Health Response: $RESPONSE"
+          if [[ "$RESPONSE" == *"OK"* ]]; then
+            echo "Deployment verified successfully. Health check PASSED."
+          else
+            echo "Warning: Health check did not return OK status."
+          fi

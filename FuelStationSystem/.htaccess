@@ -1,0 +1,64 @@
+# ==============================================================================
+# Hostinger Shared Hosting Apache / LiteSpeed Configuration
+# Fuel Station Management System — fuel.atmabiswas.org
+# ==============================================================================
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # 1. Force HTTPS Redirect
+    RewriteCond %{HTTPS} off
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    # 2. Route all API requests to PHP API engine (api/index.php)
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^api/(.*)$ api/index.php?route=$1 [QSA,L]
+
+    # 3. Serve Frontend (client/ directory)
+    RewriteCond %{REQUEST_URI} !^/api/
+    RewriteCond %{REQUEST_URI} !^/uploads/
+    RewriteCond %{REQUEST_URI} !^/client/
+    RewriteCond %{DOCUMENT_ROOT}/client%{REQUEST_URI} -f
+    RewriteRule ^(.*)$ client/$1 [L]
+
+    RewriteCond %{REQUEST_URI} !^/api/
+    RewriteCond %{REQUEST_URI} !^/uploads/
+    RewriteCond %{REQUEST_URI} !^/client/
+    RewriteRule ^$ client/index.html [L]
+
+    # 4. Protect sensitive files and directories
+    RewriteRule ^\.env - [F,L,NC]
+    RewriteRule ^\.git - [F,L,NC]
+    RewriteRule ^node_modules/ - [F,L,NC]
+    RewriteRule ^database/ - [F,L,NC]
+    RewriteRule ^logs/ - [F,L,NC]
+    RewriteRule ^api/config\.php - [F,L,NC]
+</IfModule>
+
+# Security Headers (Internal Enterprise Privacy)
+<IfModule mod_headers.c>
+    Header always set X-Frame-Options "DENY"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "camera=(self), microphone=(), geolocation=()"
+    Header always set X-Robots-Tag "noindex, nofollow, noarchive, nosnippet"
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+</IfModule>
+
+# Caching & Compression
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
+</IfModule>
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css "access plus 7 days"
+    ExpiresByType application/javascript "access plus 7 days"
+    ExpiresByType image/jpeg "access plus 30 days"
+    ExpiresByType image/png "access plus 30 days"
+    ExpiresByType image/webp "access plus 30 days"
+</IfModule>
+
+Options -Indexes

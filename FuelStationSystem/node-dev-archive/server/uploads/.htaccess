@@ -1,0 +1,27 @@
+# ==============================================================================
+# Security Protection for Uploaded Files Directory
+# Prevents execution of scripts (PHP, CGI, Perl, Python, Shell) inside uploads
+# ==============================================================================
+
+# Disable CGI and Script Execution
+Options -ExecCGI -Indexes
+
+# Turn off PHP engine if mod_php is loaded
+<IfModule mod_php7.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+
+# Force default handler for all files in uploads directory (serve as plain static files)
+SetHandler default-handler
+
+# Remove script handlers for dangerous extensions
+RemoveHandler .php .phtml .php3 .php4 .php5 .php7 .phps .cgi .pl .py .asp .aspx .jsp
+
+# Disable script execution headers
+<FilesMatch "\.(php|phtml|php3|php4|php5|php7|phps|cgi|pl|py|asp|aspx|jsp|sh|exe)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
