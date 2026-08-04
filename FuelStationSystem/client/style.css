@@ -621,43 +621,23 @@ input, select, textarea, button { font-family: inherit; }
 .backup-actions { display: flex; gap: 10px; flex-wrap: wrap; }
 
 /* ============================================================
-   MODALS & OVERLAYS
+   MODALS
    ============================================================ */
-.modal-backdrop,
 .modal-overlay {
-  position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65);
+  position: fixed; inset: 0; background: rgba(15, 23, 42, 0.55);
   display: flex; align-items: center; justify-content: center;
-  z-index: 9999; padding: 20px; backdrop-filter: blur(4px);
+  z-index: 100; padding: 20px; backdrop-filter: blur(2px);
   animation: fadeIn 0.2s ease;
-  overflow-y: auto;
 }
-.modal-backdrop.hidden,
-.modal-overlay.hidden {
-  display: none !important;
-}
-
-.modal,
-.modal-card {
+.modal {
   background: var(--surface); border-radius: var(--radius-lg);
   width: 100%; max-width: 480px; max-height: 90vh;
   display: flex; flex-direction: column;
   box-shadow: var(--shadow-lg);
   animation: cardIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  overflow: hidden;
-  position: relative;
-  margin: auto;
 }
-
-.modal-close {
-  background: transparent; border: none; font-size: 18px;
-  color: var(--text-muted); cursor: pointer; width: 32px; height: 32px;
-  border-radius: 8px; display: flex; align-items: center; justify-content: center;
-  transition: all var(--transition);
-}
-.modal-close:hover { background: var(--surface-subtle); color: var(--danger); }
-
 .modal-lg { max-width: 760px; }
-.modal-sm { max-width: 400px; }
+.modal-sm { max-width: 380px; }
 .modal-img { max-width: 720px; }
 .modal-header {
   display: flex; align-items: center; justify-content: space-between;
@@ -666,13 +646,6 @@ input, select, textarea, button { font-family: inherit; }
 .modal-header h3 { margin: 0; font-size: 16px; display: flex; align-items: center; gap: 8px; }
 .modal-body { padding: 22px; overflow-y: auto; }
 .modal-footer { display: flex; justify-content: flex-end; gap: 10px; padding: 16px 22px; border-top: 1px solid var(--border); }
-
-/* Utility & Helper Classes */
-.help-text { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
-.text-muted { color: var(--text-muted) !important; }
-.text-center { text-align: center !important; }
-.readonly-box { background: var(--surface-subtle) !important; }
-.pref-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; }
 
 .img-modal-body { display: flex; align-items: center; justify-content: center; padding: 10px; overflow: auto; }
 .img-modal-body img {

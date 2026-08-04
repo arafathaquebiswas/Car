@@ -273,14 +273,3 @@ After deploying to `https://fuel.atmabiswas.org/`, verify:
 5. [ ] **Uploads Security**: Confirm `https://fuel.atmabiswas.org/uploads/` does not list files (`403 Forbidden`).
 6. [ ] **User Login & Uploads**: Log in as Admin/Sir/Driver, submit a fuel request with mandatory photos, approve and verify photo display.
 7. [ ] **Logs**: Confirm `logs/app.log` and `logs/error.log` are recording events cleanly in `/home/uXXXXXXXX/domains/atmabiswas.org/public_html/fuel/logs/`.
-
----
-
-## 10. Linux Case-Sensitivity & Asset Hygiene Verification
-
-The codebase has undergone a full automated audit to guarantee zero errors when deployed to Hostinger's Linux filesystem:
-
-- **100% Casing Accuracy**: All `require()` statements in Node backend files (`server/controllers`, `server/routes`, `server/models`, `server/middleware`, `server/utils`) strictly match exact file casing on disk.
-- **Relative Asset Referencing**: Logos (`logo/NGO_logo_monogram.webp`), icons (`client/assets/icons/`), favicons, and manifest assets (`client/manifest.json`) use relative paths to eliminate 404s in both domain root and subfolder deployments.
-- **Upload Directories**: Tracked upload subfolders (`uploads/profile-photos`, `uploads/money-receipts`, `uploads/signatures`, `uploads/vehicle-photos`, `uploads/driver-photos`, `uploads/logo`, `uploads/fuel-receipts`) include `.gitkeep` placeholders and are protected with `uploads/.htaccess` script execution prevention.
-

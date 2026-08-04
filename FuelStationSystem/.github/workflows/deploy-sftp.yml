@@ -17,10 +17,10 @@ jobs:
       - name: SFTP Sync to Hostinger (Preserve Uploads & .env)
         uses: SamKirsch/sftp-sync-action@v1.0.1
         with:
-          host: ${{ secrets.HOSTINGER_HOST || secrets.HOSTINGER_FTP_HOST }}
-          username: ${{ secrets.HOSTINGER_USERNAME || secrets.HOSTINGER_FTP_USER }}
-          password: ${{ secrets.HOSTINGER_PASSWORD || secrets.HOSTINGER_FTP_PASSWORD }}
-          port: ${{ secrets.HOSTINGER_PORT || secrets.HOSTINGER_FTP_PORT || 21 }}
+          host: ${{ secrets.HOSTINGER_FTP_HOST }}
+          username: ${{ secrets.HOSTINGER_FTP_USER }}
+          password: ${{ secrets.HOSTINGER_FTP_PASSWORD }}
+          port: ${{ secrets.HOSTINGER_FTP_PORT || 21 }}
           local_path: "./*"
           remote_path: "/public_html/fuel/"
           exclude: ".git*, .env, /uploads/*, /logs/*, /node-dev-archive/*"

@@ -202,7 +202,7 @@ CREATE TABLE IF NOT EXISTS user_audit_logs (
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS settings (
   id              TINYINT UNSIGNED PRIMARY KEY DEFAULT 1,
-  office_name     VARCHAR(150) NOT NULL DEFAULT 'ATMABISWAS Fuel',
+  office_name     VARCHAR(150) NOT NULL DEFAULT 'City Office — Vehicle Fuel Desk',
   logo_path       VARCHAR(255) NULL,
   currency_symbol VARCHAR(10)  NOT NULL DEFAULT '৳',
   theme           VARCHAR(10)  NOT NULL DEFAULT 'auto',
@@ -231,7 +231,7 @@ INSERT INTO stations (name) VALUES
 ON DUPLICATE KEY UPDATE name = name;
 
 INSERT INTO settings (id, office_name, currency_symbol, theme) VALUES
-  (1, 'ATMABISWAS Fuel', '৳', 'auto')
+  (1, 'City Office — Vehicle Fuel Desk', '৳', 'auto')
 ON DUPLICATE KEY UPDATE office_name = office_name;
 
 -- Two example fuel records so the dashboard/reports aren't empty on first run.

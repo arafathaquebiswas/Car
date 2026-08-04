@@ -95,8 +95,8 @@ const create = asyncHandler(async (req, res) => {
     });
   } else {
     await notificationModel.notifyUsersByRole(["sir", "admin"], {
-      title: "Fuel Request Submitted",
-      message: `⛽ Driver "${record.driver}" submitted Fuel Request ${record.id} successfully.`,
+      title: "New Fuel Request Submitted",
+      message: `Driver "${record.driver}" submitted Fuel Request ${record.id} and it is waiting for review.`,
       type: "approval",
       relatedRecordCode: record.id,
     });
@@ -128,7 +128,7 @@ const update = asyncHandler(async (req, res) => {
   if (!isDraft) {
     await notificationModel.notifyUsersByRole(["sir", "admin"], {
       title: "Fuel Request Resubmitted",
-      message: `⛽ Fuel Request ${record.id} has been corrected and resubmitted by "${record.driver}".`,
+      message: `Fuel Request ${record.id} has been corrected and resubmitted by "${record.driver}".`,
       type: "approval",
       relatedRecordCode: record.id,
     });
@@ -181,7 +181,7 @@ const approve = asyncHandler(async (req, res) => {
 
   await notifyDriverByName(record.driver, {
     title: "Fuel Request Approved",
-    message: `✅ Your fuel request ${record.id} has been approved.`,
+    message: `Your Fuel Request ${record.id} has been approved and digitally signed.`,
     type: "success",
     relatedRecordCode: record.id,
   });
@@ -194,14 +194,14 @@ const unlock = asyncHandler(async (req, res) => {
 
   await notifyDriverByName(record.driver, {
     title: "Fuel Request Unlocked",
-    message: `🔓 Your request ${record.id} has been unlocked by the administrator.`,
+    message: `Fuel Request ${record.id} has been unlocked for correction.`,
     type: "warning",
     relatedRecordCode: record.id,
   });
 
   await notificationModel.notifyUsersByRole(["sir"], {
     title: "Fuel Request Unlocked",
-    message: `🔓 Request ${record.id} was unlocked by Administrator "${req.user.username}".`,
+    message: `Fuel Request ${record.id} was unlocked by Administrator "${req.user.username}".`,
     type: "warning",
     relatedRecordCode: record.id,
   });

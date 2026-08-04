@@ -10,7 +10,7 @@
 
   /* ============ CONSTANTS ============ */
   // Fallback display values used only until /api/settings has loaded.
-  const DEFAULT_OFFICE_NAME = "ATMABISWAS Fuel";
+  const DEFAULT_OFFICE_NAME = "City Office — Vehicle Fuel Desk";
   const DEFAULT_CURRENCY = "৳";
 
   const IMG_MAX_WIDTH = 900;
@@ -488,10 +488,10 @@
 
     if (currentPage) {
       const pageTitle = PAGE_LABELS[currentPage] || currentPage.charAt(0).toUpperCase() + currentPage.slice(1);
-      document.title = `${pageTitle} | ATMABISWAS Fuel | Vehicle Fuel Management System`;
+      document.title = `${pageTitle} | ${title}`;
     }
 
-    const logoUrl = brandingSettings.companyLogo || logoPath || "logo/NGO_logo_monogram.webp";
+    const logoUrl = brandingSettings.companyLogo || logoPath || "/logo/NGO_logo_monogram.webp";
 
     $all(".brand-logo-slot").forEach((slot) => {
       slot.innerHTML = `<img src="${logoUrl}" class="brand-logo-img" alt="ATMABISWAS Logo" style="width:100%;height:100%;object-fit:contain;" />`;
@@ -633,7 +633,7 @@
     byId("settingsTheme").value = getThemePreference();
     applyBranding();
 
-    const logoUrl = brandingSettings.companyLogo || logoPath || "logo/NGO_logo_monogram.webp";
+    const logoUrl = brandingSettings.companyLogo || logoPath || "/logo/NGO_logo_monogram.webp";
     const logoPreview = byId("settingsLogoPreview");
     if (logoPreview) {
       logoPreview.innerHTML = `<img src="${logoUrl}" class="brand-logo-img" alt="ATMABISWAS Logo" style="width:100%;height:100%;object-fit:contain;" />`;
@@ -840,26 +840,19 @@
       emptyEl.classList.add("hidden");
       $("#recentTable").classList.remove("hidden");
       tbody.innerHTML = recent.map((r) => `
-        <tr data-id="${r.id}" style="cursor:pointer;">
+        <tr>
           <td><strong>${r.id}</strong></td>
           <td>${formatDateDisplay(r.date)}</td>
           <td>${escapeHtml(r.driver)}</td>
           <td>${escapeHtml(r.vehicleNumber)}</td>
           <td>${formatMoney(r.totalAmount)}</td>
           <td>${statusBadgeHtml(r)}</td>
-          <td>
-            <div class="row-actions">
-              <button type="button" class="act-view" data-act="view" data-id="${r.id}" title="View"><i class="fa-solid fa-eye"></i></button>
-              <button type="button" class="act-edit" data-act="edit" data-id="${r.id}" title="${r.locked ? "Locked — click to request unlock" : "Edit"}"><i class="fa-solid ${r.locked ? "fa-lock" : "fa-pen"}"></i></button>
-              ${currentUser && currentUser.role === "admin" ? `<button type="button" class="act-delete" data-act="delete" data-id="${r.id}" title="Delete"><i class="fa-solid fa-trash"></i></button>` : ""}
-            </div>
-          </td>
         </tr>
       `).join("");
 
       if (recentCardsEl) {
         recentCardsEl.innerHTML = recent.map((r) => `
-          <div class="mobile-card" data-id="${r.id}" style="cursor:pointer;">
+          <div class="mobile-card" data-id="${r.id}">
             <div class="mobile-card-header">
               <div class="mobile-card-title">
                 <strong>${r.id}</strong>
@@ -902,19 +895,13 @@
       approvedEmptyEl.classList.add("hidden");
       $("#recentApprovedTable").classList.remove("hidden");
       approvedTbody.innerHTML = recentApproved.map((r) => `
-        <tr data-id="${r.id}" style="cursor:pointer;">
+        <tr>
           <td><strong>${r.id}</strong></td>
           <td>${escapeHtml(r.driver)}</td>
           <td>${escapeHtml(r.vehicleNumber)}</td>
           <td>${escapeHtml(r.approvedBy) || "-"}</td>
           <td>${formatTimestamp(r.signedAt)}</td>
           <td>${formatMoney(r.totalAmount)}</td>
-          <td>
-            <div class="row-actions">
-              <button type="button" class="act-view" data-act="view" data-id="${r.id}" title="View"><i class="fa-solid fa-eye"></i></button>
-              <button type="button" class="act-edit" data-act="edit" data-id="${r.id}" title="${r.locked ? "Locked — click to request unlock" : "Edit"}"><i class="fa-solid ${r.locked ? "fa-lock" : "fa-pen"}"></i></button>
-            </div>
-          </td>
         </tr>
       `).join("");
 
@@ -1767,8 +1754,8 @@
     }
 
     let fuelBtns;
-    if (canApprove || (currentUser && currentUser.role === "driver")) {
-      const fuelDisabled = r.isDraft;
+    if (canApprove) {
+      const fuelDisabled = r.approvalStatus !== "approved";
       fuelBtns = `
         <div class="fuel-status-btns">
           <button class="btn-got ${r.fuelReceived === "received" ? "active" : ""}" data-act="received" data-id="${r.id}" ${fuelDisabled ? "disabled" : ""}>
@@ -1879,29 +1866,16 @@
       if (thumb) { openImageModal(thumb.dataset.src, thumb.dataset.title); return; }
 
       const btn = e.target.closest("button[data-act]");
-      if (btn) {
-        e.preventDefault();
-        e.stopPropagation();
-        const act = btn.dataset.act;
-        const id = btn.dataset.id;
-        if (act === "view") openViewModal(id);
-        else if (act === "edit") editRecord(id);
-        else if (act === "delete") deleteRecord(id);
-        else if (act === "sign") openSignModal(id);
-        else if (act === "reviewFirst") openViewModal(id);
-        else if (act === "received") setFuelReceived(id, "received");
-        else if (act === "notreceived") setFuelReceived(id, "not_received");
-        return;
-      }
-
-      const clickableItem = e.target.closest("tr[data-id], .mobile-card[data-id]");
-      if (clickableItem && !e.target.closest("a, button, input, select, textarea")) {
-        const id = clickableItem.dataset.id;
-        if (id) {
-          e.preventDefault();
-          openViewModal(id);
-        }
-      }
+      if (!btn) return;
+      const act = btn.dataset.act;
+      const id = btn.dataset.id;
+      if (act === "view") openViewModal(id);
+      else if (act === "edit") editRecord(id);
+      else if (act === "delete") deleteRecord(id);
+      else if (act === "sign") openSignModal(id);
+      else if (act === "reviewFirst") openViewModal(id);
+      else if (act === "received") setFuelReceived(id, "received");
+      else if (act === "notreceived") setFuelReceived(id, "not_received");
     });
 
     const debouncedRender = debounce(renderRecordsTable, 200);
@@ -2826,7 +2800,7 @@
      that deferral was a mistake in planning Parts 1–2 (their init
      functions were defined but never actually called/wired until now).
      ============================================================ */
-  function bootApp() {
+  document.addEventListener("DOMContentLoaded", () => {
     initDarkMode();
     initAuth();
     initNavigation();
@@ -2849,13 +2823,7 @@
     initMandatoryPhotoButtons();
     initNotifications();
     initOfflineAndPerformanceHandlers();
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", bootApp);
-  } else {
-    bootApp();
-  }
+  });
 
   /* ============================================================
      SIGNATURE PAD (pure UI — canvas drawing, no API dependency)
@@ -3333,7 +3301,7 @@
       return;
     }
     const printArea = byId("printArea");
-    const logoUrl = brandingSettings.companyLogo || logoPath || "logo/NGO_logo_monogram.webp";
+    const logoUrl = brandingSettings.companyLogo || logoPath || "/logo/NGO_logo_monogram.webp";
     printArea.innerHTML = `
       <div style="font-family:Arial,sans-serif;color:#0f172a;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;border-bottom:2px solid #0099F1;padding-bottom:10px;">

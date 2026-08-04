@@ -9,7 +9,7 @@
   "theme_color": "#0099F1",
   "icons": [
     {
-      "src": "logo/NGO_logo_monogram.webp",
+      "src": "/logo/NGO_logo_monogram.webp",
       "sizes": "192x192 512x512",
       "type": "image/webp",
       "purpose": "any maskable"
